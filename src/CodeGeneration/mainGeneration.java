@@ -554,6 +554,82 @@ public class mainGeneration {
         Document document = null;
         DocumentBuilder builder = null;
 
+        try {
+
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            builder = docFactory.newDocumentBuilder();
+            document = builder.parse(f);
+
+            TransformerFactory transFactory = TransformerFactory.newInstance();
+            Transformer transformer = transFactory.newTransformer();
+
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+            document.setXmlStandalone(true);
+
+            Element man = (Element) document.getElementsByTagName("manifest").item(0);
+            man=(Element) man.getElementsByTagName("application").item(0);
+
+            Element activity_added=document.createElement("activity");
+            activity_added.setAttribute("android:name","."+activity_name);
+            activity_added.setAttribute("android:label",""+activity_name);
+            man.appendChild(activity_added);
+
+            Result output = new StreamResult(new File(path+"\\AndroidManifest.xml"));
+            Source input = new DOMSource(document);
+            transformer.transform(input, output);
+
+        } catch (ParserConfigurationException | IOException | SAXException | TransformerException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void RemoveActivityFromManifest(String path,String activity_name){
+        File f=new File(path+"\\AndroidManifest.xml");
+
+        Document document = null;
+        DocumentBuilder builder = null;
+
+        try {
+
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            builder = docFactory.newDocumentBuilder();
+            document = builder.parse(f);
+
+            TransformerFactory transFactory = TransformerFactory.newInstance();
+            Transformer transformer = transFactory.newTransformer();
+
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+            document.setXmlStandalone(true);
+
+            Element man = (Element) document.getElementsByTagName("manifest").item(0);
+            man=(Element) man.getElementsByTagName("application").item(0);
+
+            NodeList activities= man.getElementsByTagName("activity");
+            for(int i=0;i<activities.getLength();i++){
+                NamedNodeMap test=activities.item(i).getAttributes();
+                String name="";
+                String value="";
+
+                for(int j=0;j<test.getLength();j++){//TODO : FIX THIS
+                    name=test.item(j).getNodeName();
+                    value=test.item(j).getTextContent();
+                }
+            }
+
+            Element activity_added=document.createElement("activity");
+            activity_added.setAttribute("android:name","."+activity_name);
+            activity_added.setAttribute("android:label",""+activity_name);
+            man.appendChild(activity_added);
+
+            Result output = new StreamResult(new File(path+"\\AndroidManifest.xml"));
+            Source input = new DOMSource(document);
+            transformer.transform(input, output);
+
+        } catch (ParserConfigurationException | IOException | SAXException | TransformerException e) {
+            e.printStackTrace();
+        }
     }
 
 }

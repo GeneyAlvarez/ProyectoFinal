@@ -21,6 +21,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -208,6 +209,7 @@ public class FirstGeneration extends AnAction {
                                     break;
                                 case "delete":
                                         boolean sw5=false;
+                                        String classname=test[1];
                                         for(ClassGeneration cg : Classes){
                                             if(cg.getClassname().equals(test[1])){
                                                 sw5=true;
@@ -222,6 +224,27 @@ public class FirstGeneration extends AnAction {
                                             }
                                             auxclassGeneration.start(DirSrc,project,Package,Subroutines.FormGeneration(Forms));
                                             //delete activites
+                                            File clase=new File(DirSrc+"\\"+test[1]+".java");
+                                            clase.delete();
+
+                                            File activity_view=new File(DirSrc+"\\"+test[1]+"_view.java");
+                                            activity_view.delete();
+
+                                            File activity_edition=new File(DirSrc+"\\"+test[1]+"_edition.java");
+                                            activity_edition.delete();
+
+                                            File layout_view=new File(DirRes+"layout\\activity_"+test[1]+"_view.xml");
+                                            layout_view.delete();
+
+                                            File layout_edition=new File(DirRes+"layout\\activity_"+test[1]+"_edition.xml");
+                                            layout_edition.delete();
+
+                                            File menu_view=new File(DirRes+"menu\\menu_"+test[1]+"_view.xml");
+                                            layout_view.delete();
+
+                                            File menu_edition=new File(DirRes+"menu\\menu_"+test[1]+"_edition.xml");
+                                            layout_edition.delete();
+
                                         }else{
                                             JOptionPane.showMessageDialog(null, "Class "+test[1]+" not found.");
                                         }

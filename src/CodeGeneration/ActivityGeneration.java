@@ -240,12 +240,12 @@ public class ActivityGeneration {
                                     VALUE= document.createElement("TextView");
                                     break;
                                 case "edition":
-                                    VALUE= document.createElement("EditView");
+                                    VALUE= document.createElement("EditText");
                                     if(attr_type.equals("string")){
-                                        VALUE.setAttribute("android:inputType","TYPE_CLASS_TEXT");
+                                        VALUE.setAttribute("android:inputType","text");
                                     }else{
                                         if(attr_type.equals("int")){
-                                            VALUE.setAttribute("android:inputType","TYPE_CLASS_NUMBER");
+                                            VALUE.setAttribute("android:inputType","number");
                                         }
                                     }
                                     break;
