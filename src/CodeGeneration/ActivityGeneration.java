@@ -24,7 +24,7 @@ public class ActivityGeneration {
 
 
 
-    public static void start(Project project, String commando, ArrayList<String>  attrib, String pathclass, String pathxml, String pack){
+    public static void start(Project project, String commando, ArrayList<String>  attrib, String pathclass, String pathxml, String pack,String ManifestLocation){
         String[] test = commando.split(" ");
         String classname="";
         switch (test.length){
@@ -55,6 +55,10 @@ public class ActivityGeneration {
 
         ActivityClass2(project,attrib_view,pathclass,"view",classname,pack);
         ActivityClass2(project,attrib_edition,pathclass,"edition",classname,pack);
+
+        mainGeneration.AddActivityToManifest(ManifestLocation,classname+"_"+"view");
+        mainGeneration.AddActivityToManifest(ManifestLocation,classname+"_"+"edition");
+
 
     }
 
@@ -207,54 +211,67 @@ public class ActivityGeneration {
 
             //----------------------------------------------------------------
                 int tam=attrib.size();
-                switch(Type){
-                    case "view":
-                        for(int i=0;i<tam;i++){
-                            String attr_name=attrib.get(i).split("\\.")[0];
-                            attr_name=attr_name.substring(0, 1).toUpperCase()+attr_name.substring(1);
-                            String attr_type=attrib.get(i).split("\\.")[1];
+                //switch(Type){
 
-                            Element ATTRIBUTE= document.createElement("TextView");
-                            ATTRIBUTE.setAttribute("android:text",attr_name);
-                            for(int j=0;j<text_field_name.size();j++){
-                                ATTRIBUTE.setAttribute(text_field_name.get(j),text_field_atrib.get(j));
-                            }
-                            Element VALUE;
-                            if(attr_type.equals("file")){
-                                VALUE= document.createElement("ImageView");
-                            }else{
-                                VALUE= document.createElement("TextView");
-                            }
+                    for(int i=0;i<tam;i++){
+                        String attr_name=attrib.get(i).split("\\.")[0];
+                        attr_name=attr_name.substring(0, 1).toUpperCase()+attr_name.substring(1);
+                        String attr_type=attrib.get(i).split("\\.")[1];
 
-                            for(int j=0;j<text_field_name.size();j++){
+                        Element ATTRIBUTE= document.createElement("TextView");
+                        ATTRIBUTE.setAttribute("android:text",attr_name);
+                        for(int j=0;j<text_field_name.size();j++){
+                            ATTRIBUTE.setAttribute(text_field_name.get(j),text_field_atrib.get(j));
+                        }
+                        Element VALUE = null;
+                        if(attr_type.equals("file")){
+                            switch(Type){
+                                case "view":
+                                    VALUE= document.createElement("ImageView");
+                                    break;
+                                case "edition":
+                                    VALUE= document.createElement("ImageButton");
+                                    VALUE.setAttribute("android:onClick","onClick_"+attr_name);
+                                    break;
+                            }
+                        }else{
+                            switch(Type){//android:inputType
+                                case "view":
+                                    VALUE= document.createElement("TextView");
+                                    break;
+                                case "edition":
+                                    VALUE= document.createElement("EditView");
+                                    if(attr_type.equals("string")){
+                                        VALUE.setAttribute("android:inputType","TYPE_CLASS_TEXT");
+                                    }else{
+                                        if(attr_type.equals("int")){
+                                            VALUE.setAttribute("android:inputType","TYPE_CLASS_NUMBER");
+                                        }
+                                    }
+                                    break;
+                            }
+                        }
+
+                        for(int j=0;j<text_field_name.size();j++){
+                            if (VALUE != null) {
                                 VALUE.setAttribute(text_field_name.get(j),text_field_atrib.get(j));
                             }
-                            ATTRIBUTE.setAttribute("android:id","@+id/text"+i);
+                        }
+                        ATTRIBUTE.setAttribute("android:id","@+id/text"+i);
+                        if (VALUE != null) {
                             VALUE.setAttribute("android:id","@+id/value"+i);
-                            if(i!=0){
-                                ATTRIBUTE.setAttribute("android:layout_below","@+id/value"+(i-1));
-                            }
+                        }
+                        if(i!=0){
+                            ATTRIBUTE.setAttribute("android:layout_below","@+id/value"+(i-1));
+                        }
+                        if (VALUE != null) {
                             VALUE.setAttribute("android:layout_below","@+id/text"+i);
-
-                            Layout.appendChild(ATTRIBUTE);
-                            Layout.appendChild(VALUE);
                         }
-                        break;
-                    case "edition":
-                        for(int i=0;i<tam;i++){
-                            String attr_name=attrib.get(i).split("\\.")[0];
-                            attr_name=attr_name.substring(0, 1).toUpperCase()+attr_name.substring(1);
-                            String attr_type=attrib.get(i).split("\\.")[1];
 
-                            Element ATTRIBUTE= document.createElement("TextView");
-                            ATTRIBUTE.setAttribute("android:text",attr_name);
-                            for(int j=0;j<text_field_name.size();j++){
-                                ATTRIBUTE.setAttribute(text_field_name.get(j),text_field_atrib.get(j));
-                            }
+                        Layout.appendChild(ATTRIBUTE);
+                        Layout.appendChild(VALUE);
+                    }
 
-                        }
-                        break;
-                }
             //----------------------------------------------------------------
 
             TransformerFactory transFactory = TransformerFactory.newInstance();

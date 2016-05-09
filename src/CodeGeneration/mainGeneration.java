@@ -548,4 +548,12 @@ public class mainGeneration {
         return document;
     }
 
+    public static void AddActivityToManifest(String path,String activity_name){
+        File f=new File(path+"\\AndroidManifest.xml");
+
+        Document document = null;
+        DocumentBuilder builder = null;
+
+    }
+
 }

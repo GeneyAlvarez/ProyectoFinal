@@ -38,6 +38,7 @@ public class FirstGeneration extends AnAction {
     String MainLocation;
     String Package;
     Document ManifestLocation;
+    String ManifestDirection;
 
     @Override
     public void actionPerformed(AnActionEvent e) {
@@ -286,7 +287,7 @@ public class FirstGeneration extends AnAction {
                             case 1:
                                 if(test[0].equals("exit")){
                                     Classes.add(Command.Create(commando,attrib,pathclass,pathxml,pack));
-                                    ActivityGeneration.start(project,commando,attrib,pathclass,pathxml,pack);
+                                    ActivityGeneration.start(project,commando,attrib,pathclass,pathxml,pack,ManifestDirection);
 
                                     frame2.dispose();
                                 }else{
@@ -385,6 +386,7 @@ public class FirstGeneration extends AnAction {
         assert vf != null;
         for (VirtualFile test : vf.getChildren()){
             if(test.getName().equals("AndroidManifest.xml")){
+                ManifestDirection=ProjectDir+"\\app";
                 Manifest= mainGeneration.manifest(ProjectDir+"\\app");
             }
         }
@@ -392,6 +394,7 @@ public class FirstGeneration extends AnAction {
         if(vf2!=null){
             for (VirtualFile test : vf2.getChildren()){
                 if(test.getName().equals("AndroidManifest.xml")){
+                    ManifestDirection=ProjectDir+"\\app\\manifests";
                     Manifest= mainGeneration.manifest(ProjectDir+"\\app\\manifests");
                 }
             }
@@ -400,6 +403,7 @@ public class FirstGeneration extends AnAction {
         assert vf != null;
         for (VirtualFile test : vf.getChildren()){
             if(test.getName().equals("AndroidManifest.xml")){
+                ManifestDirection=ProjectDir+"\\app\\src";
                 Manifest= mainGeneration.manifest(ProjectDir+"\\app\\src");
             }
         }
@@ -407,6 +411,7 @@ public class FirstGeneration extends AnAction {
         assert vf != null;
         for (VirtualFile test : vf.getChildren()){
             if(test.getName().equals("AndroidManifest.xml")){
+                ManifestDirection=ProjectDir+"\\app\\src\\main";
                 Manifest= mainGeneration.manifest(ProjectDir+"\\app\\src\\main");
             }
         }
