@@ -318,46 +318,47 @@ public class mainGeneration {
         onresume.add("\t\ttoast.show();");
         onresume.add("\t}");
 
-        // TODO Fix this sheet
+
         ArrayList<String> onjump=new ArrayList<>();
         onjump.add("\tpublic void saltar(final int position){");
+
+        onjump.add("\tData dat=De.Arraytest.get(position);");
+        onjump.add("\tObject inf=dat.getOb();");
+        onjump.add("\tString class_object=\"\"+inf.getClass();");
+        onjump.add("\tint piv=class_object.split(\"\\\\.\").length;");
+        onjump.add("\tclass_object=class_object.split(\"\\\\.\")[piv-1];");
+
         onjump.add("\t\tAlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);");
         onjump.add("\t\talertDialogBuilder.setTitle(\"Selección de vista\");");
         onjump.add("\t\talertDialogBuilder.setMessage(\"Seleccione el view que desea ejecutar\");");
+        onjump.add("\t\tfinal String finalClass_object = class_object;");
         onjump.add("\t\talertDialogBuilder.setPositiveButton(\"Vista\", new DialogInterface.OnClickListener() {");
         onjump.add("\t\t\tpublic void onClick(DialogInterface dialogo1, int id) {");
-        onjump.add("\t\t\t\tIntent i;");
-        onjump.add("\t\t\t\tswitch(position){");
-        onjump.add("\t\t\t\t\tcase 0:");
-        onjump.add("\t\t\t\t\t\ti = new Intent(context,Vista0.class );");
-        onjump.add("\t\t\t\t\t\tstartActivity(i);");
-        onjump.add("\t\t\t\t\t\tbreak;");
-        onjump.add("\t\t\t\t\tdefault:");
-        onjump.add("\t\t\t\t\t\tContext context = getApplicationContext();");
-        onjump.add("\t\t\t\t\t\tCharSequence text = \"Vista no implementada\";");
-        onjump.add("\t\t\t\t\t\tint duration = Toast.LENGTH_SHORT;");
-        onjump.add("\t\t\t\t\t\tToast toast = Toast.makeText(context,text, duration);");
-        onjump.add("\t\t\t\t\t\ttoast.show();");
-        onjump.add("\t\t\t\t\t\tbreak;");
-        onjump.add("\t\t\t\t}");
+         onjump.add("\t\t\t\ttry {");
+         onjump.add("\t\t\t\t\tIntent i;");
+         onjump.add("\t\t\t\t\tClass<?> classType = Class.forName(\""+Package+"\"+\".\"+finalClass_object+\"_view\");");
+         onjump.add("\t\t\t\t\ti = new Intent(context,classType );");
+         onjump.add("\t\t\t\t\ti.putExtra(\"INDEX\", position);");
+         onjump.add("\t\t\t\t\tstartActivity(i);");
+         onjump.add("\t\t\t\t}catch (ClassNotFoundException e) {");
+         onjump.add("\t\t\t\t\te.printStackTrace();");
+         onjump.add("\t\t\t\t}");
+
         onjump.add("\t\t\t}");
         onjump.add("\t\t});");
         onjump.add("\t\talertDialogBuilder.setNegativeButton(\"Edicion\", new DialogInterface.OnClickListener() {");
         onjump.add("\t\t\tpublic void onClick(DialogInterface dialogo1, int id) {");
-        onjump.add("\t\t\t\tIntent i;");
-        onjump.add("\t\t\t\tswitch (position) {");
-        onjump.add("\t\t\t\t\tcase 0:");
-        onjump.add("\t\t\t\t\t\ti = new Intent(context, Edicion0.class);");
-        onjump.add("\t\t\t\t\t\tstartActivity(i);");
-        onjump.add("\t\t\t\t\t\tbreak;");
-        onjump.add("\t\t\t\t\tdefault:");
-        onjump.add("\t\t\t\t\t\tContext context = getApplicationContext();");
-        onjump.add("\t\t\t\t\t\tCharSequence text = \"Formulario no implementado\";");
-        onjump.add("\t\t\t\t\t\tint duration = Toast.LENGTH_SHORT;");
-        onjump.add("\t\t\t\t\t\tToast toast = Toast.makeText(context,text, duration);");
-        onjump.add("\t\t\t\t\t\ttoast.show();");
-        onjump.add("\t\t\t\t\t\tbreak;");
+
+        onjump.add("\t\t\t\ttry {");
+        onjump.add("\t\t\t\t\tIntent i;");
+        onjump.add("\t\t\t\t\tClass<?> classType = Class.forName(\""+Package+"\"+\".\"+finalClass_object+\"_edition\");");
+        onjump.add("\t\t\t\t\ti = new Intent(context,classType );");
+        onjump.add("\t\t\t\t\ti.putExtra(\"INDEX\", position);");
+        onjump.add("\t\t\t\t\tstartActivity(i);");
+        onjump.add("\t\t\t\t}catch (ClassNotFoundException e) {");
+        onjump.add("\t\t\t\t\te.printStackTrace();");
         onjump.add("\t\t\t\t}");
+
         onjump.add("\t\t\t}");
         onjump.add("\t\t});");
         onjump.add("\t\talertDialogBuilder.show();");

@@ -75,7 +75,7 @@ public class ActivityGeneration {
         Coordinator_name.add("android:layout_height");          Coordinator_atrib.add("match_parent");
         Coordinator_name.add("xmlns:tools");                    Coordinator_atrib.add("http://schemas.android.com/tools");
         Coordinator_name.add("android:fitsSystemWindows");      Coordinator_atrib.add("true");
-        Coordinator_name.add("android:background");             Coordinator_atrib.add("@color/PrimaryLight");
+        Coordinator_name.add("android:background");             Coordinator_atrib.add("@colors/PrimaryLight");
         Coordinator_name.add("tools:context");                  Coordinator_atrib.add(Pack+"."+Name+"_"+Type);
 
         ArrayList<String> Appbar_name=new ArrayList<>();
@@ -141,7 +141,6 @@ public class ActivityGeneration {
         fab_name.add("android:clickable");                                     fab_atrib.add("true");
         fab_name.add("app:elevation");                                         fab_atrib.add("6dp");
         fab_name.add("app:rippleColor");                                       fab_atrib.add("@android:color/white");
-        fab_name.add("android:src");                                           fab_atrib.add("@drawable/ic_1");
 
         //-----------Text Components--------------
         ArrayList<String> text_field_name=new ArrayList<>();                    ArrayList<String> text_field_atrib=new ArrayList<>();
@@ -345,7 +344,9 @@ public class ActivityGeneration {
         }
 
         ArrayList<String> attributes=new ArrayList<>();
-        attributes.add("\tint index=0;");//TODO CHANGE TO THE INT SEND FROM THE INTENT
+        attributes.add("\tIntent mIntent = getIntent();");
+        attributes.add("\tint intValue = mIntent.getIntExtra(\"INDEX\", 0);");
+        attributes.add("\tint index=intValue;");
         attributes.add("\tDataStructure De=DataStructure.getInstance();");
         attributes.add("\tData dat=De.Arraytest.get(index);");
         attributes.add("\t"+Name+" obj = ("+Name+") dat.getOb();");
@@ -379,15 +380,6 @@ public class ActivityGeneration {
 
             attributes.add("\tString val_"+name+";");
         }
-
-        /*private TextView ed1;
-        private TextView ed2;
-        private TextView ed3;
-        private ImageView ivw;
-        String title;
-        String autor;
-        String isbn;
-        String imagen;*/
 
         ArrayList<String> oncreate=new ArrayList<>();
         oncreate.add("\t@Override");
