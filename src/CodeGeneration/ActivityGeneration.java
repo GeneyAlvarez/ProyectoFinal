@@ -307,6 +307,7 @@ public class ActivityGeneration {
                 imports.add("import android.support.design.widget.CollapsingToolbarLayout;");
                 imports.add("import android.support.v7.app.AppCompatActivity;");
                 imports.add("import android.os.Bundle;");
+                imports.add("import android.widget.ImageButton;");
                 imports.add("import android.support.v7.widget.Toolbar;");
                 imports.add("import android.view.Menu;");
                 imports.add("import android.view.MenuItem;");
@@ -347,11 +348,46 @@ public class ActivityGeneration {
         attributes.add("\tint index=0;");//TODO CHANGE TO THE INT SEND FROM THE INTENT
         attributes.add("\tDataStructure De=DataStructure.getInstance();");
         attributes.add("\tData dat=De.Arraytest.get(index);");
+        attributes.add("\t"+Name+" obj = ("+Name+") dat.getOb();");
         attributes.add("\tprivate Toolbar toolbar;");
         attributes.add("\tprivate CollapsingToolbarLayout collapsingToolbarLayout;");
-        if(Type.equals("edition")){
+        /*if(Type.equals("edition")){
             attributes.add("\tString imgDecodableString;");
+        }*/
+        for(int i=0;i<attrib.size();i++){
+            String type=attrib.get(i).split("\\.")[1];
+            String name=attrib.get(i).split("\\.")[0];
+
+            attributes.add("");
+
+            switch(Type){
+                case "view":
+                    if(type.equals("file")){
+                        attributes.add("\tprivate ImageView imgv"+i+";");
+                    }else{
+                        attributes.add("\tprivate TextView tv"+i+";");
+                    }
+                    break;
+                case "edition":
+                    if(type.equals("file")){
+                        attributes.add("\tImageButton imgv"+i+";");
+                    }else{
+                        attributes.add("\tprivate EditText tv"+i+";");
+                    }
+                    break;
+            }
+
+            attributes.add("\tString val_"+name+";");
         }
+
+        /*private TextView ed1;
+        private TextView ed2;
+        private TextView ed3;
+        private ImageView ivw;
+        String title;
+        String autor;
+        String isbn;
+        String imagen;*/
 
         ArrayList<String> oncreate=new ArrayList<>();
         oncreate.add("\t@Override");

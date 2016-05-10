@@ -321,7 +321,7 @@ public class mainGeneration {
         // TODO Fix this sheet
         ArrayList<String> onjump=new ArrayList<>();
         onjump.add("\tpublic void saltar(final int position){");
-        onjump.add("\t\tAlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Lista.this);");
+        onjump.add("\t\tAlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);");
         onjump.add("\t\talertDialogBuilder.setTitle(\"Selección de vista\");");
         onjump.add("\t\talertDialogBuilder.setMessage(\"Seleccione el view que desea ejecutar\");");
         onjump.add("\t\talertDialogBuilder.setPositiveButton(\"Vista\", new DialogInterface.OnClickListener() {");
@@ -603,25 +603,32 @@ public class mainGeneration {
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             document.setXmlStandalone(true);
 
-            Element man = (Element) document.getElementsByTagName("manifest").item(0);
-            man=(Element) man.getElementsByTagName("application").item(0);
+            File check=new File(path+"\\AndroidManifest.xml");
+            BufferedReader br = new BufferedReader(new FileReader(check));
 
-            NodeList activities= man.getElementsByTagName("activity");
-            for(int i=0;i<activities.getLength();i++){
-                NamedNodeMap test=activities.item(i).getAttributes();
-                String name="";
-                String value="";
+            File temp=File.createTempFile("check", ".txt", check.getParentFile());
+            PrintWriter writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(temp)));
 
-                for(int j=0;j<test.getLength();j++){//TODO : FIX THIS
-                    name=test.item(j).getNodeName();
-                    value=test.item(j).getTextContent();
+            try {
+                String line = br.readLine();
+                while (line != null) {
+                    if(line.contains(String.format("<activity android:label=\"%s_edition\" android:name=\".%s_edition\"/>",activity_name,activity_name))){
+                        line=line.replace(String.format("<activity android:label=\"%s_edition\" android:name=\".%s_edition\"/>",activity_name,activity_name),"");
+                    }
+                    if(line.contains(String.format("<activity android:label=\"%s_view\" android:name=\".%s_view\"/>",activity_name,activity_name))){
+                        line=line.replace(String.format("<activity android:label=\"%s_view\" android:name=\".%s_view\"/>",activity_name,activity_name),"");
+                    }
+
+                    writer.println(line);
+                    line = br.readLine();
                 }
+            } finally {
+                br.close();
+                writer.close();
             }
 
-            Element activity_added=document.createElement("activity");
-            activity_added.setAttribute("android:name","."+activity_name);
-            activity_added.setAttribute("android:label",""+activity_name);
-            man.appendChild(activity_added);
+            check.delete();
+            temp.renameTo(check);
 
             Result output = new StreamResult(new File(path+"\\AndroidManifest.xml"));
             Source input = new DOMSource(document);

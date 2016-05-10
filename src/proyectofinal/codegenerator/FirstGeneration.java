@@ -224,6 +224,9 @@ public class FirstGeneration extends AnAction {
                                             }
                                             auxclassGeneration.start(DirSrc,project,Package,Subroutines.FormGeneration(Forms));
                                             //delete activites
+
+                                            mainGeneration.RemoveActivityFromManifest(ManifestDirection,test[1]);
+
                                             File clase=new File(DirSrc+"\\"+test[1]+".java");
                                             clase.delete();
 
@@ -240,10 +243,10 @@ public class FirstGeneration extends AnAction {
                                             layout_edition.delete();
 
                                             File menu_view=new File(DirRes+"menu\\menu_"+test[1]+"_view.xml");
-                                            layout_view.delete();
+                                            menu_view.delete();
 
                                             File menu_edition=new File(DirRes+"menu\\menu_"+test[1]+"_edition.xml");
-                                            layout_edition.delete();
+                                            menu_edition.delete();
 
                                         }else{
                                             JOptionPane.showMessageDialog(null, "Class "+test[1]+" not found.");
