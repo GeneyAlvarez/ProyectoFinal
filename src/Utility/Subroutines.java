@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 public class Subroutines {
 
     public static boolean isAction(String string) {
-        Pattern p = Pattern.compile("(create|edit|add|remove|delete|link|contains|exit)");
+        Pattern p = Pattern.compile("(create|edit|add|remove|delete|exit)");
         Matcher m = p.matcher(string);
         return m.matches();
     }
@@ -141,17 +141,6 @@ public class Subroutines {
             case "exit":
                 if(temp.length!=1){
                     return new ErrorConfirmation(false,"Error: invalid number of parameters");
-                }
-                break;
-            case "link":
-                if(!(temp.length==4 && (temp[2].equals("contains")))){
-                    return new ErrorConfirmation(false,"Syntactical Analysis: Failed");
-                }else{
-                    boolean t=isVariable(temp[1]);
-                    boolean t2=isVariable(temp[3]);
-                    if(!t || !t2){
-                        return new ErrorConfirmation(false,"Error: invalid class name");
-                    }
                 }
                 break;
             case "delete":

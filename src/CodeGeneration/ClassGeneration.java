@@ -245,9 +245,6 @@ public class ClassGeneration {
         }
     }
 
-    public void createForm(){
 
-
-    }
 
 }

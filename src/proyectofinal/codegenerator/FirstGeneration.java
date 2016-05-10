@@ -1,29 +1,20 @@
 package proyectofinal.codegenerator;
 
 import CodeGeneration.*;
-
-
 import Utility.ErrorConfirmation;
 import Utility.Subroutines;
-
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-
 import org.w3c.dom.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-
 import com.intellij.ui.JBColor;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Date;
 
 
 /**
@@ -170,6 +161,7 @@ public class FirstGeneration extends AnAction {
                                                 if(Classes.get(i).getClassname().equals(test[1])){
                                                     sw3=true;
                                                     Classes.set(i,Command.Add(Classes.get(i),test[3],test[4],DirSrc,Package));
+                                                    // TODO SAVE APOLLO
                                                     boolean sw=true;
                                                     while(sw){
                                                         sw=Forms.remove(test[1]);
@@ -362,7 +354,6 @@ public class FirstGeneration extends AnAction {
         frame2.setVisible(true);
 
     }
-
 
     public void FindMain(VirtualFile vf,String find,String main){
         if(!vf.isDirectory()){
