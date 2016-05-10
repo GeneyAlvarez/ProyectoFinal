@@ -142,6 +142,20 @@ public class ActivityGeneration {
         fab_name.add("app:elevation");                                         fab_atrib.add("6dp");
         fab_name.add("app:rippleColor");                                       fab_atrib.add("@android:color/white");
 
+        //---------------SAVE ALL-------------------------
+        ArrayList<String> save_name=new ArrayList<>();
+        ArrayList<String> save_atrib=new ArrayList<>();
+        save_name.add("android:layout_width");                                    save_atrib.add("wrap_content");
+        save_name.add("android:layout_height");                                   save_atrib.add("wrap_content");
+        save_name.add("android:id");                                              save_atrib.add("@+id/saveAll");
+        save_name.add("android:text");                                            save_atrib.add("Guardar todo");
+        save_name.add("android:onClick");                                         save_atrib.add("SAVEALL");
+        save_name.add("android:fontFamily");                                      save_atrib.add("sans-serif-condensed");
+        save_name.add("android:textSize");                                        save_atrib.add("25sp");
+        save_name.add("android:layout_centerHorizontal");                         save_atrib.add("true");
+        save_name.add("android:layout_marginTop");                                save_atrib.add("30sp");
+        //android:layout_below="@+id/imagen"
+
         //-----------Text Components--------------
         ArrayList<String> text_field_name=new ArrayList<>();                    ArrayList<String> text_field_atrib=new ArrayList<>();
         text_field_name.add("android:layout_width");                            text_field_atrib.add("wrap_content");
@@ -230,7 +244,7 @@ public class ActivityGeneration {
                                     break;
                                 case "edition":
                                     VALUE= document.createElement("ImageButton");
-                                    VALUE.setAttribute("android:onClick","onClick_"+attr_name);
+                                    VALUE.setAttribute("android:onClick","onClick");
                                     break;
                             }
                         }else{
@@ -269,6 +283,14 @@ public class ActivityGeneration {
 
                         Layout.appendChild(ATTRIBUTE);
                         Layout.appendChild(VALUE);
+
+                        if(i==tam-1){
+                            Element boton= document.createElement("Button");
+                            boton.setAttribute("android:layout_below","@+id/value"+(tam-1));
+                            for(int j=0;j<save_name.size();j++){
+                                boton.setAttribute(save_name.get(j),save_atrib.get(j));
+                            }
+                        }
                     }
 
             //----------------------------------------------------------------
@@ -300,7 +322,7 @@ public class ActivityGeneration {
         switch(Type){
             case "view":
                 imports.add("import android.content.Context;");
-                imports.add("import android.content.SharedPreferences;");
+                imports.add("import android.content.Intent;");
                 imports.add("import android.graphics.BitmapFactory;");
                 imports.add("import android.net.Uri;");
                 imports.add("import android.support.design.widget.CollapsingToolbarLayout;");
@@ -319,9 +341,10 @@ public class ActivityGeneration {
             case "edition":
                 imports.add("import android.app.AlertDialog;");
                 imports.add("import android.content.Context;");
+                imports.add("import android.graphics.drawable.BitmapDrawable;");
                 imports.add("import android.content.DialogInterface;");
                 imports.add("import android.content.Intent;");
-                imports.add("import android.content.SharedPreferences;");
+                imports.add("import android.widget.ImageButton;");
                 imports.add("import android.database.Cursor;");
                 imports.add("import android.graphics.Bitmap;");
                 imports.add("import android.graphics.BitmapFactory;");
@@ -352,9 +375,8 @@ public class ActivityGeneration {
         attributes.add("\t"+Name+" obj = ("+Name+") dat.getOb();");
         attributes.add("\tprivate Toolbar toolbar;");
         attributes.add("\tprivate CollapsingToolbarLayout collapsingToolbarLayout;");
-        /*if(Type.equals("edition")){
-            attributes.add("\tString imgDecodableString;");
-        }*/
+        attributes.add("\tint actual_id;");
+
         for(int i=0;i<attrib.size();i++){
             String type=attrib.get(i).split("\\.")[1];
             String name=attrib.get(i).split("\\.")[0];
@@ -390,6 +412,40 @@ public class ActivityGeneration {
         oncreate.add("\t\ttoolbar = (Toolbar) findViewById(R.id.toolbar2);");
         oncreate.add("\t\tsetSupportActionBar(toolbar);");
         oncreate.add("");
+
+        for(int i=0;i<attrib.size();i++) {
+            String type = attrib.get(i).split("\\.")[1];
+            String name = attrib.get(i).split("\\.")[0];
+            String nameMayus=name.substring(0,1).toUpperCase()+name.substring(1);
+            oncreate.add("");
+
+            switch(Type){
+                case "view":
+                    if(type.equals("file")){
+                        oncreate.add("\timgv"+i+"=(ImageView) findViewById(R.id.value"+i+");");
+                        oncreate.add("\tval_"+name+" = obj.get"+nameMayus+"();");
+                        oncreate.add("\timgv"+i+".setImageURI(Uri.parse(val_"+name+"));");
+                    }else{
+                        oncreate.add("\ttv"+i+"=(TextView) findViewById(R.id.value"+i+");");
+                        oncreate.add("\tval_"+name+" = obj.get"+nameMayus+"();");
+                        oncreate.add("\ttv"+i+".setText(val_"+name+");");
+                    }
+                    break;
+                case "edition":
+                    if(type.equals("file")){
+                        oncreate.add("\timgv"+i+"=(ImageButton) findViewById(R.id.value"+i+");");
+                        oncreate.add("\tval_"+name+" = obj.get"+nameMayus+"();");
+                        oncreate.add("\timgv"+i+".setImageURI(Uri.parse(val_"+name+"));");
+                    }else{
+                        oncreate.add("\ttv"+i+"=(EditText) findViewById(R.id.value"+i+");");
+                        oncreate.add("\tval_"+name+" = obj.get"+nameMayus+"();");
+                        oncreate.add("\ttv"+i+".setText(val_"+name+");");
+                    }
+                    break;
+            }
+        }
+
+        oncreate.add("");
         oncreate.add("\t\tcollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);");
         oncreate.add(String.format("\t\tcollapsingToolbarLayout.setTitle(\"%s\");",classname));
         oncreate.add("\t\tcollapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));");
@@ -406,7 +462,7 @@ public class ActivityGeneration {
         ArrayList<String> oncreateoptionsmenu=new ArrayList<>();
         oncreateoptionsmenu.add("\t@Override");
         oncreateoptionsmenu.add("\tpublic boolean onCreateOptionsMenu(Menu menu) {");
-        oncreateoptionsmenu.add(String.format("\t\tgetMenuInflater().inflate(R.menu.menu_%s, menu);",classname));//TODO : MAKE THE MENUS IN THE RES/MENU
+        oncreateoptionsmenu.add(String.format("\t\tgetMenuInflater().inflate(R.menu.menu_%s, menu);",classname));
         oncreateoptionsmenu.add("\t\treturn true;");
         oncreateoptionsmenu.add("\t}");
 
@@ -425,11 +481,111 @@ public class ActivityGeneration {
         onoptionselected.add("\t\treturn super.onOptionsItemSelected(item);");
         onoptionselected.add("\t}");
 
+        ArrayList<String> onclicks = new ArrayList<>();
+        if(Type.equals("edition")){
+            onclicks.add("\tpublic void onClick(View v){");
+            onclicks.add("\t\tswitch(v.getId()){");
+            for(int i=0;i<attrib.size();i++) {
+                String type = attrib.get(i).split("\\.")[1];
+                String name = attrib.get(i).split("\\.")[0];
+                String nameMayus=name.substring(0,1).toUpperCase()+name.substring(1);
+                if(type.equals("file")){
+                    onclicks.add("\t\t\tcase R.id.value"+i+":");
+                    onclicks.add("\t\t\t\tactual_id = v.getId()");
+                    onclicks.add("\t\t\t\timageEdit((ImageButton) findViewById(v.getId))");
+                    onclicks.add("\t\t\tbreak;");
+                }
+            }
+
+            onclicks.add("\t\t}");
+            onclicks.add("\t}");
+            onclicks.add("");
+        }
+
+        ArrayList<String> uri = new ArrayList<>();
+        uri.add("\tpublic Uri getImageUri(Context inContext, Bitmap inImage) {");
+        uri.add("\t\tByteArrayOutputStream bytes = new ByteArrayOutputStream();");
+        uri.add("\t\tinImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);");
+        uri.add("\t\tString path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, \"Title\", null);");
+        uri.add("\t\treturn Uri.parse(path);");
+        uri.add("\t}");
+
+        ArrayList<String> imageEdit= new ArrayList<>();
+        imageEdit.add("\tpublic void imagenEdit(final ImageView ivw){");
+        imageEdit.add("\t\tAlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);");
+        imageEdit.add("\t\talertDialogBuilder.setTitle(\"Imagen\");");
+        imageEdit.add("\t\talertDialogBuilder.setMessage(\"Selección de Imagen\");");
+        imageEdit.add("\t\talertDialogBuilder.setPositiveButton(\"Tomar una foto\", new DialogInterface.OnClickListener() {");
+        imageEdit.add("\t\t\tpublic void onClick(DialogInterface dialogo1, int id) {");
+        imageEdit.add("\t\t\t\tivw.setImageBitmap(null);");
+        imageEdit.add("\t\t\t\tivw.destroyDrawingCache();");
+        imageEdit.add("\t\t\t\tIntent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);");
+        imageEdit.add("\t\t\t\tstartActivityForResult(cameraIntent, 0);");
+        imageEdit.add("\t\t\t}");
+        imageEdit.add("\t\t});");
+        imageEdit.add("\t\talertDialogBuilder.setNegativeButton(\"Buscar en galeria\", new DialogInterface.OnClickListener() {");
+        imageEdit.add("\t\t\tpublic void onClick(DialogInterface dialogo1, int id) {");
+        imageEdit.add("\t\t\t\tivw.setImageBitmap(null);");
+        imageEdit.add("\t\t\t\tivw.destroyDrawingCache();");
+        imageEdit.add("\t\t\t\tIntent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);");
+        imageEdit.add("\t\t\t\tstartActivityForResult(galleryIntent, 1);");
+        imageEdit.add("\t\t\t}");
+        imageEdit.add("\t\t});");
+        imageEdit.add("\t\talertDialogBuilder.show();");
+        imageEdit.add("\t}");
+
+        ArrayList<String> activityResult=new ArrayList<>();
+        activityResult.add("\t@Override");
+        activityResult.add("\tprotected void onActivityResult(int requestCode, int resultCode, Intent data) {");
+        activityResult.add("\t\tsuper.onActivityResult(requestCode, resultCode, data);");
+        activityResult.add("\t\tImageView imgView=(ImageView) findViewById(actual_id);");
+        activityResult.add("\t\tString imgDecodableString;");
+        activityResult.add("\t\ttry {");
+        activityResult.add("\t\t\tif (requestCode == 1 && resultCode == RESULT_OK && null != data) {");
+        activityResult.add("\t\t\t\tUri selectedImage = data.getData();");
+        activityResult.add("\t\t\t\tString[] filePathColumn = { MediaStore.Images.Media.DATA };");
+        activityResult.add("\t\t\t\tCursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);");
+        activityResult.add("\t\t\t\tcursor.moveToFirst();");
+        activityResult.add("\t\t\t\tint columnIndex = cursor.getColumnIndex(filePathColumn[0]);");
+        activityResult.add("\t\t\t\timgDecodableString = cursor.getString(columnIndex);");
+        activityResult.add("\t\t\t\tcursor.close();");
+        activityResult.add("\t\t\t\timgView.setImageBitmap(BitmapFactory.decodeFile(imgDecodableString));");
+        activityResult.add("\t\t\t} else {");
+        activityResult.add("\t\t\t\tif (requestCode == 0 && resultCode == RESULT_OK) {");
+        activityResult.add("\t\t\t\t\tBitmap photo = (Bitmap) data.getExtras().get(\"data\");");
+        activityResult.add("\t\t\t\t\timgView.setImageBitmap(photo);");
+        activityResult.add("\t\t\t\t}else{");
+        activityResult.add("\t\t\t\t\tToast.makeText(this, \"You haven't picked Image\", Toast.LENGTH_LONG).show();");
+        activityResult.add("\t\t\t\t}");
+        activityResult.add("\t\t\t}");
+        activityResult.add("\t\t} catch (Exception e) {");
+        activityResult.add("\t\t\tToast.makeText(this, \"Something went wrong\", Toast.LENGTH_LONG).show();");
+        activityResult.add("\t\t}");
+        activityResult.add("\t}");
+
+
         ArrayList<String> SAVE = new ArrayList<>();
         if(Type.equals("edition")){
             SAVE.add("\tpublic void SAVEALL(View v){");
-            SAVE.add("\t\t//De.Arraytest.get(index).setOb(inf);");
-            SAVE.add("\t\t//De.Arraytest.get(index).setRow(new Row(inf.getFirst(),inf.getSecond(),inf.getThird(),inf.getIcon()));");
+            for(int i=0; i<attrib.size();i++){
+                String type = attrib.get(i).split("\\.")[1];
+                String name = attrib.get(i).split("\\.")[0];
+                String nameMayus=name.substring(0,1).toUpperCase()+name.substring(1);
+
+                switch (type){
+                    case "string":
+                        SAVE.add("\t\tobj.set"+nameMayus+"(tv"+i+".getText().toString());");
+                        break;
+                    case "file":
+                        SAVE.add("\t\tobj.set"+nameMayus+"((getImageUri(this,((BitmapDrawable) ivw"+i+".getDrawable()).getBitmap())).toString());");
+                        break;
+                    case "int":
+                        SAVE.add("\t\tobj.set"+nameMayus+"(Integer.parseInt(tv"+i+".getText().toString()));");
+                        break;
+                }
+            }
+            SAVE.add("\t\tDe.Arraytest.get(index).setOb(obj);");
+            SAVE.add("\t\tDe.Arraytest.get(index).setRow(new Row(obj.getFirst(),obj.getSecond(),obj.getThird(),obj.getIcon()));");
             SAVE.add("\t}");
         }
 
@@ -464,6 +620,22 @@ public class ActivityGeneration {
         output.add("");
         if(Type.equals("edition")){
             for(String st : SAVE){
+                output.add(st);
+            }
+            output.add("");
+            for(String st : uri){
+                output.add(st);
+            }
+            output.add("");
+            for(String st : onclicks){
+                output.add(st);
+            }
+            output.add("");
+            for(String st : imageEdit){
+                output.add(st);
+            }
+            output.add("");
+            for(String st : activityResult){
                 output.add(st);
             }
             output.add("");
