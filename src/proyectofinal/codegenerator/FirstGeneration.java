@@ -192,6 +192,22 @@ public class FirstGeneration extends AnAction {
                                                 if(Classes.get(i).getClassname().equals(test[1])){
                                                     sw4=true;
                                                     Classes.set(i,Command.Remove(Classes.get(i),test[3],DirSrc,Package));
+                                                    for(ClassData data: Class_Information){
+                                                        if(data.getClassname().equals(test[1])){
+                                                            ArrayList<String> temporal=data.getAttributes();
+                                                            int piv;
+                                                            for(int k=0;k<temporal.size();k++){
+                                                                if(temporal.get(k).split(" ")[1].equals(test[3])){
+                                                                    piv=k;
+                                                                    temporal.remove(piv);
+                                                                    break;
+                                                                }
+                                                            }
+                                                            ActivityGeneration.start(project,data.getCommand(),temporal,DirSrc,DirRes,Package,ManifestDirection);
+                                                            System.out.println(data.getCommand());
+                                                        }
+                                                    }
+
                                                     boolean sw=true;
                                                     while(sw){
                                                         sw=Forms.remove(test[1]);
