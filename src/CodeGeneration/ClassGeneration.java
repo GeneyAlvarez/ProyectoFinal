@@ -191,28 +191,28 @@ public class ClassGeneration {
             if(c.getFirst().equals("")){
                 out="null";
             }else{
-                out=c.getFirst();
+                out="\"\"+"+c.getFirst();
             }
         test.add(String.format("\tpublic String getFirst() {  return %s;  }",out));
         test.add("");
         if(c.getSecond().equals("")){
             out="null";
         }else{
-            out=c.getSecond();
+            out="\"\"+"+c.getSecond();
         }
         test.add(String.format("\tpublic String getSecond() {  return %s;  }",out));
         test.add("");
         if(c.getThird().equals("")){
             out="null";
         }else{
-            out=c.getThird();
+            out="\"\"+"+c.getThird();
         }
         test.add(String.format("\tpublic String getThird() {  return %s;  }",out));
         test.add("");
         if(c.getCollapse().equals("")){
             out="null";
         }else{
-            out=c.getCollapse();
+            out="\"\"+"+c.getCollapse();
         }
         test.add(String.format("\tpublic String getIcon() {  return %s;  }",out));
         test.add("");

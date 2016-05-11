@@ -75,7 +75,7 @@ public class ActivityGeneration {
         Coordinator_name.add("android:layout_height");          Coordinator_atrib.add("match_parent");
         Coordinator_name.add("xmlns:tools");                    Coordinator_atrib.add("http://schemas.android.com/tools");
         Coordinator_name.add("android:fitsSystemWindows");      Coordinator_atrib.add("true");
-        Coordinator_name.add("android:background");             Coordinator_atrib.add("@colors/PrimaryLight");
+        Coordinator_name.add("android:background");             Coordinator_atrib.add("@color/PrimaryLight");
         Coordinator_name.add("tools:context");                  Coordinator_atrib.add(Pack+"."+Name+"_"+Type);
 
         ArrayList<String> Appbar_name=new ArrayList<>();
@@ -427,7 +427,7 @@ public class ActivityGeneration {
                         oncreate.add("\timgv"+i+".setImageURI(Uri.parse(val_"+name+"));");
                     }else{
                         oncreate.add("\ttv"+i+"=(TextView) findViewById(R.id.value"+i+");");
-                        oncreate.add("\tval_"+name+" = obj.get"+nameMayus+"();");
+                        oncreate.add("\tval_"+name+" = \"\"+obj.get"+nameMayus+"();");
                         oncreate.add("\ttv"+i+".setText(val_"+name+");");
                     }
                     break;
@@ -438,7 +438,7 @@ public class ActivityGeneration {
                         oncreate.add("\timgv"+i+".setImageURI(Uri.parse(val_"+name+"));");
                     }else{
                         oncreate.add("\ttv"+i+"=(EditText) findViewById(R.id.value"+i+");");
-                        oncreate.add("\tval_"+name+" = obj.get"+nameMayus+"();");
+                        oncreate.add("\tval_"+name+" = \"\"+obj.get"+nameMayus+"();");
                         oncreate.add("\ttv"+i+".setText(val_"+name+");");
                     }
                     break;
@@ -491,8 +491,8 @@ public class ActivityGeneration {
                 String nameMayus=name.substring(0,1).toUpperCase()+name.substring(1);
                 if(type.equals("file")){
                     onclicks.add("\t\t\tcase R.id.value"+i+":");
-                    onclicks.add("\t\t\t\tactual_id = v.getId()");
-                    onclicks.add("\t\t\t\timageEdit((ImageButton) findViewById(v.getId))");
+                    onclicks.add("\t\t\t\tactual_id = v.getId();");
+                    onclicks.add("\t\t\t\timagenEdit((ImageButton) findViewById(v.getId()));");
                     onclicks.add("\t\t\tbreak;");
                 }
             }
@@ -577,7 +577,7 @@ public class ActivityGeneration {
                         SAVE.add("\t\tobj.set"+nameMayus+"(tv"+i+".getText().toString());");
                         break;
                     case "file":
-                        SAVE.add("\t\tobj.set"+nameMayus+"((getImageUri(this,((BitmapDrawable) ivw"+i+".getDrawable()).getBitmap())).toString());");
+                        SAVE.add("\t\tobj.set"+nameMayus+"((getImageUri(this,((BitmapDrawable) imgv"+i+".getDrawable()).getBitmap())).toString());");
                         break;
                     case "int":
                         SAVE.add("\t\tobj.set"+nameMayus+"(Integer.parseInt(tv"+i+".getText().toString()));");

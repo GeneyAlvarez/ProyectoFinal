@@ -32,6 +32,8 @@ public class FirstGeneration extends AnAction {
     Document ManifestLocation;
     String ManifestDirection;
 
+    ArrayList<ClassData> Class_Information=new ArrayList<>();
+
     @Override
     public void actionPerformed(AnActionEvent e) {
         int sw=JOptionPane.showConfirmDialog(null,"The Framework will make changes in the xml mainActivity and generate necessary resources and classes.", "Message",JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
@@ -162,6 +164,15 @@ public class FirstGeneration extends AnAction {
                                                     sw3=true;
                                                     Classes.set(i,Command.Add(Classes.get(i),test[3],test[4],DirSrc,Package));
                                                     // TODO SAVE APOLLO
+                                                    for(ClassData data: Class_Information){
+                                                        if(data.getClassname().equals(test[1])){
+                                                            ArrayList<String> temporal=data.getAttributes();
+                                                            temporal.add(test[3]+" "+test[4]);
+                                                            ActivityGeneration.start(project,data.getCommand(),temporal,DirSrc,DirRes,Package,ManifestDirection);
+                                                            System.out.println(data.getCommand());
+                                                        }
+                                                    }
+
                                                     boolean sw=true;
                                                     while(sw){
                                                         sw=Forms.remove(test[1]);
@@ -306,6 +317,7 @@ public class FirstGeneration extends AnAction {
                                 if(test[0].equals("exit")){
                                     Classes.add(Command.Create(commando,attrib,pathclass,pathxml,pack));
                                     ActivityGeneration.start(project,commando,attrib,pathclass,pathxml,pack,ManifestDirection);
+                                    Class_Information.add(new ClassData(commando,attrib));
 
                                     frame2.dispose();
                                 }else{

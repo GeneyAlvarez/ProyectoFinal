@@ -56,7 +56,6 @@ public class colorsGeneration {
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty(OutputKeys.METHOD, "xml");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             document.setXmlStandalone(true);
 
             Result output = new StreamResult(new File(dir+"colors.xml"));
