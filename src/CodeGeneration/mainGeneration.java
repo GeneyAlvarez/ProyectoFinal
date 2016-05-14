@@ -140,12 +140,14 @@ public class mainGeneration {
         cardattrib.add("wrap_content");
 
         ArrayList<String> layoutname=new ArrayList<>();
+        layoutname.add("android:background");//"@color/ColorPrimaryDark"
         layoutname.add("android:layout_width");
         layoutname.add("android:layout_height");
         layoutname.add("android:padding");
         layoutname.add("android:focusableInTouchMode");
         layoutname.add("android:elevation");
         ArrayList<String> layoutattrib=new ArrayList<>();
+        layoutname.add("@color/ColorPrimaryDark");
         layoutattrib.add("match_parent");
         layoutattrib.add("wrap_content");
         layoutattrib.add("16dp");
@@ -273,6 +275,9 @@ public class mainGeneration {
         ArrayList<String> imports=new ArrayList<>();
         imports.add("import android.support.v7.app.AppCompatActivity;");
         imports.add("import android.os.Bundle;");
+        imports.add("import android.content.SharedPreferences;");
+        imports.add("import android.preference.PreferenceManager;");
+        imports.add("import android.content.SharedPreferences.Editor;");
         imports.add("import android.view.Menu;");
         imports.add("import android.view.MenuItem;");
         imports.add("import android.app.AlertDialog;");
@@ -334,30 +339,35 @@ public class mainGeneration {
         onjump.add("\t\tfinal String finalClass_object = class_object;");
         onjump.add("\t\talertDialogBuilder.setPositiveButton(\"Vista\", new DialogInterface.OnClickListener() {");
         onjump.add("\t\t\tpublic void onClick(DialogInterface dialogo1, int id) {");
-         onjump.add("\t\t\t\ttry {");
-         onjump.add("\t\t\t\t\tIntent i;");
-         onjump.add("\t\t\t\t\tClass<?> classType = Class.forName(\""+Package+"\"+\".\"+finalClass_object+\"_view\");");
-         onjump.add("\t\t\t\t\ti = new Intent(context,classType );");
-         onjump.add("\t\t\t\t\ti.putExtra(\"INDEX\", position);");
-         onjump.add("\t\t\t\t\tstartActivity(i);");
-         onjump.add("\t\t\t\t}catch (ClassNotFoundException e) {");
-         onjump.add("\t\t\t\t\te.printStackTrace();");
-         onjump.add("\t\t\t\t}");
+
+        onjump.add("\t\t\t\tIntent i;");
+        onjump.add("\t\t\t\tString c_name=\""+Package+".\"+finalClass_object+\"_view\";");
+        onjump.add("\t\t\t\tClass<?> c = null;");
+        onjump.add("\t\t\t\ttry {");
+        onjump.add("\t\t\t\t\tc = Class.forName(c_name);");
+        onjump.add("\t\t\t\t} catch (ClassNotFoundException e) {");
+        onjump.add("\t\t\t\t\te.printStackTrace();");
+        onjump.add("\t\t\t\t}");
+        onjump.add("\t\t\t\ti = new Intent(context,c);");
+        onjump.add("\t\t\t\tsavePreferences(\"INDEX\",position);");
+        onjump.add("\t\t\t\tstartActivity(i);");
 
         onjump.add("\t\t\t}");
         onjump.add("\t\t});");
         onjump.add("\t\talertDialogBuilder.setNegativeButton(\"Edicion\", new DialogInterface.OnClickListener() {");
         onjump.add("\t\t\tpublic void onClick(DialogInterface dialogo1, int id) {");
 
+        onjump.add("\t\t\t\tIntent i;");
+        onjump.add("\t\t\t\tString c_name=\""+Package+".\"+finalClass_object+\"_edition\";");
+        onjump.add("\t\t\t\tClass<?> c = null;");
         onjump.add("\t\t\t\ttry {");
-        onjump.add("\t\t\t\t\tIntent i;");
-        onjump.add("\t\t\t\t\tClass<?> classType = Class.forName(\""+Package+"\"+\".\"+finalClass_object+\"_edition\");");
-        onjump.add("\t\t\t\t\ti = new Intent(context,classType );");
-        onjump.add("\t\t\t\t\ti.putExtra(\"INDEX\", position);");
-        onjump.add("\t\t\t\t\tstartActivity(i);");
-        onjump.add("\t\t\t\t}catch (ClassNotFoundException e) {");
+        onjump.add("\t\t\t\t\tc = Class.forName(c_name);");
+        onjump.add("\t\t\t\t} catch (ClassNotFoundException e) {");
         onjump.add("\t\t\t\t\te.printStackTrace();");
         onjump.add("\t\t\t\t}");
+        onjump.add("\t\t\t\ti = new Intent(context,c);");
+        onjump.add("\t\t\t\tsavePreferences(\"INDEX\",position);");
+        onjump.add("\t\t\t\tstartActivity(i);");
 
         onjump.add("\t\t\t}");
         onjump.add("\t\t});");
@@ -391,6 +401,15 @@ public class mainGeneration {
         itemclick.add("\t\ttoast.show();");
         itemclick.add("\t\tsaltar(position);");
         itemclick.add("\t}");
+
+        ArrayList<String> Share=new ArrayList<>();
+        Share.add("\tprivate void savePreferences(String key, int value) {");
+        Share.add("\t\tSharedPreferences sharedPreferences = getSharedPreferences(\"MisPreferencias\",Context.MODE_PRIVATE);");
+        Share.add("\t\tEditor editor = sharedPreferences.edit();");
+        Share.add("\t\teditor.putInt(key, value);");
+        Share.add("\t\teditor.commit();");
+        Share.add("\t}");
+
 
         //------------
         output.add(pack);
@@ -426,6 +445,10 @@ public class mainGeneration {
         }
         output.add("");
         for(String st : itemclick){
+            output.add(st);
+        }
+        output.add("");
+        for(String st : Share){
             output.add(st);
         }
         output.add("}");

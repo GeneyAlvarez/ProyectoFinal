@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 public class Subroutines {
 
     public static boolean isAction(String string) {
-        Pattern p = Pattern.compile("(create|edit|add|remove|delete|exit)");
+        Pattern p = Pattern.compile("(json|create|edit|add|remove|delete|exit)");
         Matcher m = p.matcher(string);
         return m.matches();
     }
@@ -93,6 +93,15 @@ public class Subroutines {
         String temp2=temp[0];//Tomo la primera palabra del comando
 
         switch(temp2){
+            case "json":
+                if(temp.length!=2){
+                    return new ErrorConfirmation(false,"Error: invalid number of parameters.");
+                }else{
+                    if(!isVariable(temp[1])){
+                        return new ErrorConfirmation(false,"Error: "+temp[1]+" is not a valid class name.");
+                    }
+                }
+                break;
             case "create":
                 String test=temp[1];
                 switch(temp.length){
@@ -112,7 +121,7 @@ public class Subroutines {
                         }
                         break;
                     default:
-                        return new ErrorConfirmation(false,"Error: invalid number of parameters");
+                        return new ErrorConfirmation(false,"Error: invalid number of parameters.");
                 }
                 break;
             case "edit":

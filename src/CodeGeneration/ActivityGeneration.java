@@ -284,14 +284,14 @@ public class ActivityGeneration {
                         Layout.appendChild(ATTRIBUTE);
                         Layout.appendChild(VALUE);
 
-                        if(i==tam-1){
-                            Element boton= document.createElement("Button");
-                            boton.setAttribute("android:layout_below","@+id/value"+(tam-1));
-                            for(int j=0;j<save_name.size();j++){
-                                boton.setAttribute(save_name.get(j),save_atrib.get(j));
-                            }
-                        }
                     }
+
+            Element boton= document.createElement("Button");
+            boton.setAttribute("android:layout_below","@+id/value"+(tam-1));
+            for(int j=0;j<save_name.size();j++){
+                boton.setAttribute(save_name.get(j),save_atrib.get(j));
+            }
+            Layout.appendChild(boton);
 
             //----------------------------------------------------------------
 
@@ -325,6 +325,7 @@ public class ActivityGeneration {
                 imports.add("import android.content.Intent;");
                 imports.add("import android.graphics.BitmapFactory;");
                 imports.add("import android.net.Uri;");
+                imports.add("import android.content.SharedPreferences;");
                 imports.add("import android.support.design.widget.CollapsingToolbarLayout;");
                 imports.add("import android.support.v7.app.AppCompatActivity;");
                 imports.add("import android.os.Bundle;");
@@ -341,6 +342,7 @@ public class ActivityGeneration {
             case "edition":
                 imports.add("import android.app.AlertDialog;");
                 imports.add("import android.content.Context;");
+                imports.add("import android.content.SharedPreferences;");
                 imports.add("import android.graphics.drawable.BitmapDrawable;");
                 imports.add("import android.content.DialogInterface;");
                 imports.add("import android.content.Intent;");
@@ -367,15 +369,19 @@ public class ActivityGeneration {
         }
 
         ArrayList<String> attributes=new ArrayList<>();
-        attributes.add("\tIntent mIntent = getIntent();");
-        attributes.add("\tint intValue = mIntent.getIntExtra(\"INDEX\", 0);");
-        attributes.add("\tint index=intValue;");
-        attributes.add("\tDataStructure De=DataStructure.getInstance();");
-        attributes.add("\tData dat=De.Arraytest.get(index);");
-        attributes.add("\t"+Name+" obj = ("+Name+") dat.getOb();");
+        attributes.add("\tint intValue;");
+        attributes.add("\tint index;");
+        attributes.add("\tDataStructure De;");
+        attributes.add("\tData dat;");
+        attributes.add("\t"+Name+" obj;");
+
         attributes.add("\tprivate Toolbar toolbar;");
         attributes.add("\tprivate CollapsingToolbarLayout collapsingToolbarLayout;");
         attributes.add("\tint actual_id;");
+        attributes.add("");
+        attributes.add("\tImageView header;");
+        attributes.add("\tString val_header;");
+        attributes.add("");
 
         for(int i=0;i<attrib.size();i++){
             String type=attrib.get(i).split("\\.")[1];
@@ -412,6 +418,16 @@ public class ActivityGeneration {
         oncreate.add("\t\ttoolbar = (Toolbar) findViewById(R.id.toolbar2);");
         oncreate.add("\t\tsetSupportActionBar(toolbar);");
         oncreate.add("");
+        oncreate.add("\t\tintValue = loadSavedPreferences();");
+        oncreate.add("\t\tindex=intValue;");
+        oncreate.add("\t\tDe=DataStructure.getInstance();");
+        oncreate.add("\t\tdat=De.Arraytest.get(index);");
+        oncreate.add("\t\tobj = ("+Name+") dat.getOb();");
+        oncreate.add("");
+        oncreate.add("\t\theader=(ImageView) findViewById(R.id.header);");
+        oncreate.add("\t\tval_header= obj.getIcon();");
+        oncreate.add("\t\theader.setImageURI(Uri.parse(val_header));");
+
 
         for(int i=0;i<attrib.size();i++) {
             String type = attrib.get(i).split("\\.")[1];
@@ -422,24 +438,24 @@ public class ActivityGeneration {
             switch(Type){
                 case "view":
                     if(type.equals("file")){
-                        oncreate.add("\timgv"+i+"=(ImageView) findViewById(R.id.value"+i+");");
-                        oncreate.add("\tval_"+name+" = obj.get"+nameMayus+"();");
-                        oncreate.add("\timgv"+i+".setImageURI(Uri.parse(val_"+name+"));");
+                        oncreate.add("\t\timgv"+i+"=(ImageView) findViewById(R.id.value"+i+");");
+                        oncreate.add("\t\tval_"+name+" = obj.get"+nameMayus+"();");
+                        oncreate.add("\t\timgv"+i+".setImageURI(Uri.parse(val_"+name+"));");
                     }else{
-                        oncreate.add("\ttv"+i+"=(TextView) findViewById(R.id.value"+i+");");
-                        oncreate.add("\tval_"+name+" = \"\"+obj.get"+nameMayus+"();");
-                        oncreate.add("\ttv"+i+".setText(val_"+name+");");
+                        oncreate.add("\t\ttv"+i+"=(TextView) findViewById(R.id.value"+i+");");
+                        oncreate.add("\t\tval_"+name+" = \"\"+obj.get"+nameMayus+"();");
+                        oncreate.add("\t\ttv"+i+".setText(val_"+name+");");
                     }
                     break;
                 case "edition":
                     if(type.equals("file")){
-                        oncreate.add("\timgv"+i+"=(ImageButton) findViewById(R.id.value"+i+");");
-                        oncreate.add("\tval_"+name+" = obj.get"+nameMayus+"();");
-                        oncreate.add("\timgv"+i+".setImageURI(Uri.parse(val_"+name+"));");
+                        oncreate.add("\t\timgv"+i+"=(ImageButton) findViewById(R.id.value"+i+");");
+                        oncreate.add("\t\tval_"+name+" = obj.get"+nameMayus+"();");
+                        oncreate.add("\t\timgv"+i+".setImageURI(Uri.parse(val_"+name+"));");
                     }else{
-                        oncreate.add("\ttv"+i+"=(EditText) findViewById(R.id.value"+i+");");
-                        oncreate.add("\tval_"+name+" = \"\"+obj.get"+nameMayus+"();");
-                        oncreate.add("\ttv"+i+".setText(val_"+name+");");
+                        oncreate.add("\t\ttv"+i+"=(EditText) findViewById(R.id.value"+i+");");
+                        oncreate.add("\t\tval_"+name+" = \"\"+obj.get"+nameMayus+"();");
+                        oncreate.add("\t\ttv"+i+".setText(val_"+name+");");
                     }
                     break;
             }
@@ -577,7 +593,9 @@ public class ActivityGeneration {
                         SAVE.add("\t\tobj.set"+nameMayus+"(tv"+i+".getText().toString());");
                         break;
                     case "file":
-                        SAVE.add("\t\tobj.set"+nameMayus+"((getImageUri(this,((BitmapDrawable) imgv"+i+".getDrawable()).getBitmap())).toString());");
+                        SAVE.add("\t\tif((getImageUri(this,((BitmapDrawable) imgv"+i+".getDrawable()).getBitmap()).toString())!=null){");
+                        SAVE.add("\t\t\tobj.set"+nameMayus+"((getImageUri(this,((BitmapDrawable) imgv"+i+".getDrawable()).getBitmap())).toString());");
+                        SAVE.add("\t\t}");
                         break;
                     case "int":
                         SAVE.add("\t\tobj.set"+nameMayus+"(Integer.parseInt(tv"+i+".getText().toString()));");
@@ -588,6 +606,13 @@ public class ActivityGeneration {
             SAVE.add("\t\tDe.Arraytest.get(index).setRow(new Row(obj.getFirst(),obj.getSecond(),obj.getThird(),obj.getIcon()));");
             SAVE.add("\t}");
         }
+
+        ArrayList<String> Shared=new ArrayList<>();
+        Shared.add("private int loadSavedPreferences() {");
+        Shared.add("SharedPreferences sharedPreferences = getSharedPreferences(\"MisPreferencias\", Context.MODE_PRIVATE);");
+        Shared.add("int number = sharedPreferences.getInt(\"INDEX\",0);");
+        Shared.add("return number;");
+        Shared.add("}");
 
         ArrayList<String> output=new ArrayList<>();
         output.add(pack);
@@ -611,6 +636,10 @@ public class ActivityGeneration {
         }
         output.add("");
         for(String st : oncreateoptionsmenu){
+            output.add(st);
+        }
+        output.add("");
+        for(String st : Shared){
             output.add(st);
         }
         output.add("");

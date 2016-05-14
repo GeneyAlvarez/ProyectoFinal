@@ -163,7 +163,6 @@ public class FirstGeneration extends AnAction {
                                                 if(Classes.get(i).getClassname().equals(test[1])){
                                                     sw3=true;
                                                     Classes.set(i,Command.Add(Classes.get(i),test[3],test[4],DirSrc,Package));
-                                                    // TODO SAVE APOLLO
                                                     for(ClassData data: Class_Information){
                                                         if(data.getClassname().equals(test[1])){
                                                             ArrayList<String> temporal=data.getAttributes();
@@ -222,9 +221,6 @@ public class FirstGeneration extends AnAction {
 
                                             break;
                                     }
-                                    break;
-                                case "link":
-                                        Command.Link(test[1],test[3]);
                                     break;
                                 case "delete":
                                         boolean sw5=false;
@@ -349,9 +345,19 @@ public class FirstGeneration extends AnAction {
                                 break;
                             case 2:
                                 if(Subroutines.isKey(test[0]) && Subroutines.isAtribute(test[1])){
-                                    alertLabel.setForeground(JBColor.GREEN);
-                                    alertLabel.setText("Success");
-                                    attrib.add(text);
+                                    if(test[0].contains("c") && !test[1].split("\\.")[1].equals("file")){
+                                        alertLabel.setForeground(JBColor.RED);
+                                        alertLabel.setText("Error: The attribute type must be \"file\"");
+                                    }else{
+                                        if((test[0].contains("1")||test[0].contains("2")||test[0].contains("3"))&& test[1].split("\\.")[1].equals("file")){
+                                            alertLabel.setForeground(JBColor.RED);
+                                            alertLabel.setText("Error: The attribute type must be string or int");
+                                        }else{
+                                            alertLabel.setForeground(JBColor.GREEN);
+                                            alertLabel.setText("Success");
+                                            attrib.add(text);
+                                        }
+                                    }
                                 }else{
                                     alertLabel.setForeground(JBColor.RED);
                                     alertLabel.setText("Error");
