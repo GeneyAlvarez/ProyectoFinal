@@ -1,13 +1,14 @@
 <idea-plugin version="2">
   <id>proyectofinal.codegenerator</id>
-  <name>Android code generator</name>
+  <name>Android Forms generator</name>
   <version>1.0</version>
   <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
 
   <description><![CDATA[
-      Enter short description for your plugin here.<br>
-      <em>most HTML tags may be used</em>
-    ]]></description>
+
+        <h1>Android Forms Generator</h1>
+
+  ]]></description>
 
   <change-notes><![CDATA[
       Add change notes here.<br>
@@ -32,9 +33,9 @@
     <!-- Add your actions here -->
 
     <action id="action0" class="proyectofinal.codegenerator.FirstGeneration" text="Application form generation"
-            description="Pendiente">
+            description="...">
       <add-to-group group-id="ToolsMenu" anchor="first"/>
-      <keyboard-shortcut first-keystroke="control alt G"  keymap="$default"/>
+      <keyboard-shortcut first-keystroke="alt F"  keymap="$default"/>
     </action>
   </actions>
 

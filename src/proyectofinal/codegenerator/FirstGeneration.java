@@ -5,6 +5,7 @@ import Utility.ErrorConfirmation;
 import Utility.Subroutines;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import org.w3c.dom.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -36,14 +37,10 @@ public class FirstGeneration extends AnAction {
 
     @Override
     public void actionPerformed(AnActionEvent e) {
-        int sw=JOptionPane.showConfirmDialog(null,"The Framework will make changes in the xml mainActivity and generate necessary resources and classes.", "Message",JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
-        if(sw==2){
-            System.out.println("Exit");
-            return;
-        }
 
         //Debe existir un proyecto abierto.
         final Project project = e.getProject();
+        final Project project2 = e.getData(PlatformDataKeys.PROJECT);
         VirtualFile vf;
         String ProjectName;
         String ProjectDir;
@@ -68,11 +65,17 @@ public class FirstGeneration extends AnAction {
 
 
         if(t){//Los siguientes procedimientos se ejecutaran solo la primera vez que la accion sea ejecutada
+            int sw=JOptionPane.showConfirmDialog(null,"The Framework will make changes in the xml mainActivity and generate necessary resources and classes.", "Message",JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+            if(sw==2){
+                System.out.println("Exit");
+                return;
+            }
             colorsGeneration.Start(DirRes+"values\\",project);
             stylesGeneration.Start(DirRes+"values\\",project);
             mainGeneration.Start(DirRes+"layout\\",DirSrc,project,Package,MainLocation,Package);
             auxclassGeneration.start(DirSrc,project,Package,null);
             t=false;
+            project2.getBaseDir().refresh(false,true);
         }
 
         JFrame frame = new JFrame();
@@ -108,6 +111,7 @@ public class FirstGeneration extends AnAction {
                             switch(test[0]){
                                 case "exit":
                                     frame.dispose();
+                                    project2.getBaseDir().refresh(false,true);
                                     break;
                                 case "create":
                                     switch(test.length){
@@ -124,11 +128,13 @@ public class FirstGeneration extends AnAction {
                                             }
                                             if(!sw){
                                                 Attributes(project,text,DirSrc,DirRes,Package);
+                                                project.getBaseDir().refresh(false,true);
                                             }else{
                                                 if(sw3){
                                                     Forms.add(test[1]);
                                                     auxclassGeneration.start(DirSrc,project,Package,Subroutines.FormGeneration(Forms));
                                                     System.out.println(Forms.toString());
+                                                    project2.getBaseDir().refresh(false,true);
                                                 }
                                             }
                                             break;
@@ -145,15 +151,18 @@ public class FirstGeneration extends AnAction {
                                             }
                                             if(!sw2){
                                                 Attributes(project,text,DirSrc,DirRes,Package);
+                                                project.getBaseDir().refresh(false,true);
                                             }else{
                                                 if(sw4){
                                                     Forms.add(test[2]);
                                                     auxclassGeneration.start(DirSrc,project,Package,Subroutines.FormGeneration(Forms));
                                                     System.out.println(Forms.toString());
+                                                    project2.getBaseDir().refresh(false,true);
                                                 }
                                             }
                                             break;
                                     }
+                                    project2.getBaseDir().refresh(false,true);
                                     break;
                                 case "edit":
                                     switch(test[2]){
@@ -178,6 +187,7 @@ public class FirstGeneration extends AnAction {
                                                         System.out.println(Forms);
                                                     }
                                                     auxclassGeneration.start(DirSrc,project,Package,Subroutines.FormGeneration(Forms));
+                                                    project2.getBaseDir().refresh(false,true);
                                                 }
                                             }
                                             if(!sw3){
@@ -213,14 +223,16 @@ public class FirstGeneration extends AnAction {
                                                         System.out.println(Forms);
                                                     }
                                                     auxclassGeneration.start(DirSrc,project,Package,Subroutines.FormGeneration(Forms));
+                                                    project2.getBaseDir().refresh(false,true);
                                                 }
                                             }
                                             if(!sw4){
                                             JOptionPane.showMessageDialog(null, "Class "+test[1]+" not found.");
                                             }
-
+                                            project2.getBaseDir().refresh(false,true);
                                             break;
                                     }
+                                    project2.getBaseDir().refresh(false,true);
                                     break;
                                 case "delete":
                                         boolean sw5=false;
@@ -262,6 +274,8 @@ public class FirstGeneration extends AnAction {
 
                                             File menu_edition=new File(DirRes+"menu\\menu_"+test[1]+"_edition.xml");
                                             menu_edition.delete();
+
+                                            project2.getBaseDir().refresh(false,true);
 
                                         }else{
                                             JOptionPane.showMessageDialog(null, "Class "+test[1]+" not found.");

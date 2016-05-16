@@ -147,7 +147,7 @@ public class mainGeneration {
         layoutname.add("android:focusableInTouchMode");
         layoutname.add("android:elevation");
         ArrayList<String> layoutattrib=new ArrayList<>();
-        layoutname.add("@color/ColorPrimaryDark");
+        layoutattrib.add("@color/ColorPrimaryDark");
         layoutattrib.add("match_parent");
         layoutattrib.add("wrap_content");
         layoutattrib.add("16dp");
@@ -615,7 +615,7 @@ public class mainGeneration {
         DocumentBuilder builder = null;
 
         try {
-
+            /*
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             builder = docFactory.newDocumentBuilder();
             document = builder.parse(f);
@@ -625,7 +625,7 @@ public class mainGeneration {
 
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-            document.setXmlStandalone(true);
+            document.setXmlStandalone(true);*/
 
             File check=new File(path+"\\AndroidManifest.xml");
             BufferedReader br = new BufferedReader(new FileReader(check));
@@ -637,10 +637,10 @@ public class mainGeneration {
                 String line = br.readLine();
                 while (line != null) {
                     if(line.contains(String.format("<activity android:label=\"%s_edition\" android:name=\".%s_edition\"/>",activity_name,activity_name))){
-                        line=line.replace(String.format("<activity android:label=\"%s_edition\" android:name=\".%s_edition\"/>",activity_name,activity_name),"");
+                        line="";
                     }
                     if(line.contains(String.format("<activity android:label=\"%s_view\" android:name=\".%s_view\"/>",activity_name,activity_name))){
-                        line=line.replace(String.format("<activity android:label=\"%s_view\" android:name=\".%s_view\"/>",activity_name,activity_name),"");
+                        line="";
                     }
 
                     writer.println(line);
@@ -653,12 +653,12 @@ public class mainGeneration {
 
             check.delete();
             temp.renameTo(check);
-
+/*
             Result output = new StreamResult(new File(path+"\\AndroidManifest.xml"));
             Source input = new DOMSource(document);
-            transformer.transform(input, output);
+            transformer.transform(input, output);*/
 
-        } catch (ParserConfigurationException | IOException | SAXException | TransformerException e) {
+        } catch ( IOException e) {
             e.printStackTrace();
         }
     }
