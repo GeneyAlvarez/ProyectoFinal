@@ -1,5 +1,18 @@
 package Utility;
 
+import com.intellij.openapi.project.Project;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,7 +35,7 @@ public class Subroutines {
     }
 
     public static boolean isKey(String string){
-        Pattern c=Pattern.compile("\\-(l)?(1|2|3)?(c)?(v)?(f)?(b)?");//key
+        Pattern c=Pattern.compile("\\-(l)?(b)?(j)?(1|2|3)?(c)?(v)?(f)?");//key
         Matcher test=c.matcher(string);
         return test.matches();
     }
@@ -181,6 +194,34 @@ public class Subroutines {
         }
 
         return result;
+    }
+
+    public static void PopUp(String src,Project p){
+        ArrayList<String> menu_test=new ArrayList<>();
+        menu_test.add("<menu xmlns:android=\"http://schemas.android.com/apk/res/android\" >");
+        menu_test.add("<item");
+        menu_test.add("\tandroid:id=\"@+id/one\"");
+        menu_test.add("\tandroid:title=\"Edit\"/>");
+        menu_test.add("<item");
+        menu_test.add("\tandroid:id=\"@+id/two\"");
+        menu_test.add("\tandroid:title=\"Delete\"/>");
+        menu_test.add("<item");
+        menu_test.add("\tandroid:id=\"@+id/three\"");
+        menu_test.add("\tandroid:title=\"Cancel\"/>");
+        menu_test.add("</menu>");
+
+        File f=new File(src+"pop_up_menu.xml");
+        PrintWriter writer = null;
+        try {
+            writer = new PrintWriter(f, "UTF-8");
+            for (String anOutput : menu_test) {
+                writer.println(anOutput);
+            }
+            writer.close();
+        } catch (FileNotFoundException | UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

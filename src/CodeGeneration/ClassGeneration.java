@@ -19,6 +19,7 @@ public class ClassGeneration {
     //---Class flags
     boolean listable;
     boolean builder;
+    boolean json;
 
     String classname;
 
@@ -32,9 +33,10 @@ public class ClassGeneration {
     ArrayList<Boolean> view;
     ArrayList<Boolean> edition;
 
-    public ClassGeneration(boolean listable, boolean builder, String classname, ArrayList<String> attribute, ArrayList<String> type, String first, String second, String third, String collapse, ArrayList<Boolean> view, ArrayList<Boolean> edition) {
+    public ClassGeneration(boolean listable, boolean builder,boolean json, String classname, ArrayList<String> attribute, ArrayList<String> type, String first, String second, String third, String collapse, ArrayList<Boolean> view, ArrayList<Boolean> edition) {
         this.listable = listable;
         this.builder = builder;
+        this.json=json;
         this.classname = classname;
         this.attribute = attribute;
         this.type = type;
@@ -44,6 +46,14 @@ public class ClassGeneration {
         this.collapse = collapse;
         this.view = view;
         this.edition = edition;
+    }
+
+    public boolean isJson() {
+        return json;
+    }
+
+    public void setJson(boolean json) {
+        this.json = json;
     }
 
     public boolean isListable() {
@@ -141,8 +151,8 @@ public class ClassGeneration {
         test.add(String.format("package %s;",pack));
         test.add("");
         test.add(String.format("import %s;","android.media.Image"));
-        test.add(String.format("import %s;","java.io.File"));
-        test.add(String.format("import %s;","java.util.ArrayList"));
+        test.add("import org.json.JSONObject;");
+        test.add("import org.json.JSONException;");
         test.add("");
         test.add(String.format("public class %s {",c.getClassname()));
         String constructor_atrib="";
@@ -167,6 +177,23 @@ public class ClassGeneration {
             for(int i=0;i<c.getAttribute().size();i++){
                 ArrayList<String> att=c.getAttribute();
                 test.add(String.format("\t\tthis.%s = %s;",att.get(i),att.get(i)));
+            }
+            test.add("\t}");
+        }
+        test.add("");
+
+        if(c.isJson()){
+            test.add(String.format("\tpublic %s(%s) throws JSONException {", c.getClassname(),"String Json"));
+            test.add("\t\tJSONObject json = new JSONObject(Json);");
+            for(int i=0;i<c.getAttribute().size();i++){
+                ArrayList<String> type=c.getType();
+                ArrayList<String> att=c.getAttribute();
+                String type2=type.get(i);
+                if(type2.equals("string")||type2.equals("file")){
+                    test.add(String.format("\t\tthis.%s = %s;",att.get(i),"json.getString(\""+att.get(i)+"\")"));
+                }else{
+                    test.add(String.format("\t\tthis.%s = %s;",att.get(i),"json.getInt(\""+att.get(i)+"\")"));
+                }
             }
             test.add("\t}");
         }

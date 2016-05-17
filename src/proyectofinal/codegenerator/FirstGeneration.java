@@ -72,6 +72,7 @@ public class FirstGeneration extends AnAction {
             }
             colorsGeneration.Start(DirRes+"values\\",project);
             stylesGeneration.Start(DirRes+"values\\",project);
+            Subroutines.PopUp(DirRes+"menu\\",project);
             mainGeneration.Start(DirRes+"layout\\",DirSrc,project,Package,MainLocation,Package);
             auxclassGeneration.start(DirSrc,project,Package,null);
             t=false;

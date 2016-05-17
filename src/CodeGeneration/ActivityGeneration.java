@@ -158,7 +158,7 @@ public class ActivityGeneration {
 
         //-----------Text Components--------------
         ArrayList<String> text_field_name=new ArrayList<>();                    ArrayList<String> text_field_atrib=new ArrayList<>();
-        text_field_name.add("android:layout_width");                            text_field_atrib.add("wrap_content");
+        text_field_name.add("android:layout_width");                            text_field_atrib.add("match_parent");
         text_field_name.add("android:layout_height");                           text_field_atrib.add("wrap_content");
         text_field_name.add("android:layout_marginTop");                        text_field_atrib.add("20sp");
         text_field_name.add("android:paddingLeft");                             text_field_atrib.add("10sp");
@@ -286,13 +286,14 @@ public class ActivityGeneration {
 
                     }
 
-            Element boton= document.createElement("Button");
-            boton.setAttribute("android:layout_below","@+id/value"+(tam-1));
-            for(int j=0;j<save_name.size();j++){
-                boton.setAttribute(save_name.get(j),save_atrib.get(j));
+            if(Type.equals("edition")) {
+                Element boton = document.createElement("Button");
+                boton.setAttribute("android:layout_below", "@+id/value" + (tam - 1));
+                for (int j = 0; j < save_name.size(); j++) {
+                    boton.setAttribute(save_name.get(j), save_atrib.get(j));
+                }
+                Layout.appendChild(boton);
             }
-            Layout.appendChild(boton);
-
             //----------------------------------------------------------------
 
             TransformerFactory transFactory = TransformerFactory.newInstance();
@@ -426,7 +427,7 @@ public class ActivityGeneration {
         oncreate.add("");
         oncreate.add("\t\theader=(ImageView) findViewById(R.id.header);");
         oncreate.add("\t\tval_header= obj.getIcon();");
-        oncreate.add("\t\theader.setImageURI(Uri.parse(val_header));");
+        oncreate.add("\t\tif(val_header!=null){header.setImageURI(Uri.parse(val_header));}");
 
 
         for(int i=0;i<attrib.size();i++) {
@@ -467,12 +468,51 @@ public class ActivityGeneration {
         oncreate.add("\t\tcollapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));");
         oncreate.add("\t}");
 
+        ArrayList<String> onresume=new ArrayList<>();
+        onresume.add("\t@Override");
+        onresume.add("\tpublic void onResume() {");
+        onresume.add("\t\tsuper.onResume();");
+        onresume.add("\t\tval_header= obj.getIcon();");
+        onresume.add("\t\tif(val_header!=null){header.setImageURI(Uri.parse(val_header));}");
+        for(int i=0;i<attrib.size();i++) {
+            String type = attrib.get(i).split("\\.")[1];
+            String name = attrib.get(i).split("\\.")[0];
+            String nameMayus=name.substring(0,1).toUpperCase()+name.substring(1);
+            onresume.add("");
+            if(type.equals("file")){
+                onresume.add("\t\tval_"+name+" = obj.get"+nameMayus+"();");
+                onresume.add("\t\timgv"+i+".setImageURI(Uri.parse(val_"+name+"));");
+            }else{
+                onresume.add("\t\tval_"+name+" = \"\"+obj.get"+nameMayus+"();");
+                onresume.add("\t\ttv"+i+".setText(val_"+name+");");
+            }
+
+        }
+        onresume.add("\t}");
+
+
         ArrayList<String> fab=new ArrayList<>();
         fab.add("\tpublic void FAB_Click(View v){");
-        fab.add("\t\tCharSequence text = \" Toast \";");
-        fab.add("\t\tint duration = Toast.LENGTH_SHORT;");
-        fab.add("\t\tToast toast = Toast.makeText(getApplicationContext(), text, duration);");
-        fab.add("\t\ttoast.show();");
+        switch(Type){
+            case "view":
+                fab.add("\t\tObject inf=dat.getOb();");
+                fab.add("\t\tString class_object=\"\"+inf.getClass();");
+                fab.add("\t\tint piv=class_object.split(\"\\\\.\").length;");
+                fab.add("\t\tclass_object=class_object.split(\"\\\\.\")[piv-1];");
+                fab.add("\t\tIntent i;");
+                fab.add("\t\tString c_name=\""+Pack+".\"+class_object+\"_edition\";");
+                fab.add("\t\tClass<?> c = null;");
+                fab.add("\t\ttry {");
+                fab.add("\t\t\tc = Class.forName(c_name);");
+                fab.add("\t\t} catch (ClassNotFoundException e) {");
+                fab.add("\t\t\te.printStackTrace();}");
+                fab.add("\t\ti = new Intent(this,c);");
+                fab.add("\t\tstartActivity(i);");
+                break;
+            case "edition":
+                fab.add("\t\tthis.finish();");
+                break;
+        }
         fab.add("\t}");
 
         ArrayList<String> oncreateoptionsmenu=new ArrayList<>();
@@ -593,7 +633,7 @@ public class ActivityGeneration {
                         SAVE.add("\t\tobj.set"+nameMayus+"(tv"+i+".getText().toString());");
                         break;
                     case "file":
-                        SAVE.add("\t\tif((getImageUri(this,((BitmapDrawable) imgv"+i+".getDrawable()).getBitmap()).toString())!=null){");
+                        SAVE.add("\t\tif(imgv"+i+".getDrawable()!=null){");
                         SAVE.add("\t\t\tobj.set"+nameMayus+"((getImageUri(this,((BitmapDrawable) imgv"+i+".getDrawable()).getBitmap())).toString());");
                         SAVE.add("\t\t}");
                         break;
@@ -608,11 +648,11 @@ public class ActivityGeneration {
         }
 
         ArrayList<String> Shared=new ArrayList<>();
-        Shared.add("private int loadSavedPreferences() {");
-        Shared.add("SharedPreferences sharedPreferences = getSharedPreferences(\"MisPreferencias\", Context.MODE_PRIVATE);");
-        Shared.add("int number = sharedPreferences.getInt(\"INDEX\",0);");
-        Shared.add("return number;");
-        Shared.add("}");
+        Shared.add("\tprivate int loadSavedPreferences() {");
+        Shared.add("\t\tSharedPreferences sharedPreferences = getSharedPreferences(\"MisPreferencias\", Context.MODE_PRIVATE);");
+        Shared.add("\t\tint number = sharedPreferences.getInt(\"INDEX\",0);");
+        Shared.add("\t\treturn number;");
+        Shared.add("\t}");
 
         ArrayList<String> output=new ArrayList<>();
         output.add(pack);
@@ -631,6 +671,12 @@ public class ActivityGeneration {
             output.add(st);
         }
         output.add("");
+        if(Type.equals("view")){
+            for(String st : onresume){
+                output.add(st);
+            }
+            output.add("");
+        }
         for(String st : fab){
             output.add(st);
         }

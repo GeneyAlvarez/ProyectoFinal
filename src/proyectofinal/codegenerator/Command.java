@@ -121,6 +121,7 @@ public class Command {
         //---Class flags
         boolean listable=false;
         boolean builder=false;
+        boolean json=false;
 
         String classname="";
 
@@ -146,6 +147,9 @@ public class Command {
                 }
                 if (key.contains("b")){
                     builder=true;
+                }
+                if (key.contains("j")){
+                    json=true;
                 }
                 break;
         }
@@ -197,13 +201,11 @@ public class Command {
             }
         }
 
-        ClassGeneration CG=new ClassGeneration(listable,builder,classname,attribute,type,first,second,third,collapse,view,edition);
+        ClassGeneration CG=new ClassGeneration(listable,builder,json,classname,attribute,type,first,second,third,collapse,view,edition);
         ClassGeneration.createClass(CG,DirSrc,pack);
         return CG;
     }
 
-    public static void CreateForm(String command){
 
-    }
 
 }

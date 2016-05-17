@@ -31,7 +31,6 @@ public class mainGeneration {
         custom_row(dirRes,errorHandler,project);
         mainclass(dirSrc,Main,project,Package);
         auxiliarclass(dirSrc,pack,project);
-
     }
 
     public static void xml(String dir,ErrorHandler errorHandler,Project project){
@@ -304,6 +303,7 @@ public class mainGeneration {
         oncreate.add("\t\tmRecyclerView=(RecyclerView)findViewById(R.id.recycle);");
         oncreate.add("\t\tviewAdapter= new ViewAdapter(this);");
         oncreate.add("\t\tviewAdapter.setRecyclerClickListner(this);");
+        oncreate.add("\t\tviewAdapter.setRecyclerLClickListner(this);");
         oncreate.add("\t\tmRecyclerView.setAdapter(viewAdapter);");
         oncreate.add("\t\tmRecyclerView.setLayoutManager(new LinearLayoutManager(this));");
         oncreate.add("\t}");
@@ -314,6 +314,7 @@ public class mainGeneration {
         onresume.add("\t\tsuper.onResume();");
         onresume.add("\t\tviewAdapter= new ViewAdapter(this);");
         onresume.add("\t\tviewAdapter.setRecyclerClickListner(this);");
+        onresume.add("\t\tviewAdapter.setRecyclerLClickListner(this);");
         onresume.add("\t\tmRecyclerView.setAdapter(viewAdapter);");
         onresume.add("\t\tmRecyclerView.setLayoutManager(new LinearLayoutManager(this));");
         onresume.add("\t\tContext context = getApplicationContext();");
@@ -327,52 +328,62 @@ public class mainGeneration {
         ArrayList<String> onjump=new ArrayList<>();
         onjump.add("\tpublic void saltar(final int position){");
 
-        onjump.add("\tData dat=De.Arraytest.get(position);");
-        onjump.add("\tObject inf=dat.getOb();");
-        onjump.add("\tString class_object=\"\"+inf.getClass();");
-        onjump.add("\tint piv=class_object.split(\"\\\\.\").length;");
-        onjump.add("\tclass_object=class_object.split(\"\\\\.\")[piv-1];");
-
-        onjump.add("\t\tAlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);");
-        onjump.add("\t\talertDialogBuilder.setTitle(\"Selección de vista\");");
-        onjump.add("\t\talertDialogBuilder.setMessage(\"Seleccione el view que desea ejecutar\");");
-        onjump.add("\t\tfinal String finalClass_object = class_object;");
-        onjump.add("\t\talertDialogBuilder.setPositiveButton(\"Vista\", new DialogInterface.OnClickListener() {");
-        onjump.add("\t\t\tpublic void onClick(DialogInterface dialogo1, int id) {");
-
-        onjump.add("\t\t\t\tIntent i;");
-        onjump.add("\t\t\t\tString c_name=\""+Package+".\"+finalClass_object+\"_view\";");
-        onjump.add("\t\t\t\tClass<?> c = null;");
-        onjump.add("\t\t\t\ttry {");
-        onjump.add("\t\t\t\t\tc = Class.forName(c_name);");
-        onjump.add("\t\t\t\t} catch (ClassNotFoundException e) {");
-        onjump.add("\t\t\t\t\te.printStackTrace();");
-        onjump.add("\t\t\t\t}");
-        onjump.add("\t\t\t\ti = new Intent(context,c);");
-        onjump.add("\t\t\t\tsavePreferences(\"INDEX\",position);");
-        onjump.add("\t\t\t\tstartActivity(i);");
-
-        onjump.add("\t\t\t}");
-        onjump.add("\t\t});");
-        onjump.add("\t\talertDialogBuilder.setNegativeButton(\"Edicion\", new DialogInterface.OnClickListener() {");
-        onjump.add("\t\t\tpublic void onClick(DialogInterface dialogo1, int id) {");
-
-        onjump.add("\t\t\t\tIntent i;");
-        onjump.add("\t\t\t\tString c_name=\""+Package+".\"+finalClass_object+\"_edition\";");
-        onjump.add("\t\t\t\tClass<?> c = null;");
-        onjump.add("\t\t\t\ttry {");
-        onjump.add("\t\t\t\t\tc = Class.forName(c_name);");
-        onjump.add("\t\t\t\t} catch (ClassNotFoundException e) {");
-        onjump.add("\t\t\t\t\te.printStackTrace();");
-        onjump.add("\t\t\t\t}");
-        onjump.add("\t\t\t\ti = new Intent(context,c);");
-        onjump.add("\t\t\t\tsavePreferences(\"INDEX\",position);");
-        onjump.add("\t\t\t\tstartActivity(i);");
-
-        onjump.add("\t\t\t}");
-        onjump.add("\t\t});");
-        onjump.add("\t\talertDialogBuilder.show();");
+        onjump.add("\t\tData dat=De.Arraytest.get(position);");
+        onjump.add("\t\tObject inf=dat.getOb();");
+        onjump.add("\t\tString class_object=\"\"+inf.getClass();");
+        onjump.add("\t\tint piv=class_object.split(\"\\\\.\").length;");
+        onjump.add("\t\tclass_object=class_object.split(\"\\\\.\")[piv-1];");
+        onjump.add("\t\tIntent i;");
+        onjump.add("\t\tString c_name=\""+Package+".\"+class_object+\"_view\";");
+        onjump.add("\t\tClass<?> c = null;");
+        onjump.add("\t\ttry {");
+        onjump.add("\t\t\tc = Class.forName(c_name);");
+        onjump.add("\t\t} catch (ClassNotFoundException e) {");
+        onjump.add("\t\t\te.printStackTrace();}");
+        onjump.add("\t\ti = new Intent(context,c);");
+        onjump.add("\t\tsavePreferences(\"INDEX\",position);");
+        onjump.add("\t\tstartActivity(i);");
         onjump.add("\t}");
+        onjump.add("\tpublic void saltar2(final int position, View view){");
+        onjump.add("\t\tPopupMenu popup = new PopupMenu(MainActivity.this,view);");
+        onjump.add("\t\tpopup.getMenuInflater().inflate(R.menu.pop_up_menu, popup.getMenu());");
+        onjump.add("\t");
+        onjump.add("\t\tpopup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {");
+        onjump.add("\t\t\t@TargetApi(Build.VERSION_CODES.HONEYCOMB)");
+        onjump.add("\t\t\tpublic boolean onMenuItemClick(MenuItem item) {");
+        onjump.add("\t\t\t\tString option=item.getTitle().toString();");
+        onjump.add("\t\t\t\tif(option.equals(\"Edit\")){");
+        onjump.add("\t\t\t\t\tData dat=De.Arraytest.get(position);");
+        onjump.add("\t\t\t\t\tObject inf=dat.getOb();");
+        onjump.add("\t\t\t\t\tString class_object=\"\"+inf.getClass();");
+        onjump.add("\t\t\t\t\tint piv=class_object.split(\"\\\\.\").length;");
+        onjump.add("\t\t\t\t\tclass_object=class_object.split(\"\\\\.\")[piv-1];");
+        onjump.add("\t\t\t\t\tIntent i;");
+        onjump.add("\t\t\t\t\tString c_name=\""+Package+".\"+class_object+\"_edition\";");
+        onjump.add("\t\t\t\t\tClass<?> c = null;");
+        onjump.add("\t\t\t\t\ttry {");
+        onjump.add("\t\t\t\t\t\tc = Class.forName(c_name);");
+        onjump.add("\t\t\t\t\t} catch (ClassNotFoundException e) {");
+        onjump.add("\t\t\t\t\t\te.printStackTrace();}");
+        onjump.add("\t\t\t\t\ti = new Intent(context,c);");
+        onjump.add("\t\t\t\t\tsavePreferences(\"INDEX\",position);");
+        onjump.add("\t\t\t\t\tstartActivity(i);");
+        onjump.add("\t\t\t\t}else{");
+        onjump.add("\t\t\t\t\tif(option.equals(\"Delete\")){");
+        onjump.add("\t\t\t\t\t\tDe.Arraytest.remove(position);");
+        onjump.add("\t\t\t\t\t\trecreate();");
+        onjump.add("\t\t\t\t\t}");
+        onjump.add("\t\t\t\t}");
+        onjump.add("\t\t\t\tToast.makeText(MainActivity.this,\"You Clicked : \" + item.getTitle(),Toast.LENGTH_SHORT).show();");
+        onjump.add("\t\t\t\treturn true;");
+        onjump.add("\t\t\t}");
+        onjump.add("\t\t});");
+        onjump.add("\t\tpopup.show();");
+        onjump.add("\t}");
+
+
+
+
 
         ArrayList<String> oncreateoptionsmenu=new ArrayList<>();
         oncreateoptionsmenu.add("\t@Override");
@@ -394,12 +405,14 @@ public class mainGeneration {
         ArrayList<String> itemclick=new ArrayList<>();
         itemclick.add("\t@Override");
         itemclick.add("\tpublic void itemClick(View view, int position) {");
-        itemclick.add("\t\tContext context = getApplicationContext();");
-        itemclick.add("\t\tCharSequence text = \"Option ID : \";");
-        itemclick.add("\t\tint duration = Toast.LENGTH_SHORT;");
-        itemclick.add("\t\tToast toast = Toast.makeText(context, text + \"\" + position, duration);");
-        itemclick.add("\t\ttoast.show();");
-        itemclick.add("\t\tsaltar(position);");
+        itemclick.add("\t\tSystem.out.println(\"--->Clicked\");");
+        itemclick.add("\t\t//saltar(position);");
+        itemclick.add("\t}");
+        itemclick.add("\t");
+        itemclick.add("\t@Override");
+        itemclick.add("\tpublic void itemLClick(View view, int position) {");
+        itemclick.add("\t\tSystem.out.println(\"--->LongClicked\");");
+        itemclick.add("\t\t//saltar2(position);");
         itemclick.add("\t}");
 
         ArrayList<String> Share=new ArrayList<>();
@@ -418,7 +431,7 @@ public class mainGeneration {
             output.add(st);
         }
         output.add("");
-        output.add("public class MainActivity extends AppCompatActivity implements ViewAdapter.RecyclerClickListner {");
+        output.add("public class MainActivity extends AppCompatActivity implements ViewAdapter.RecyclerClickListner, ViewAdapter.RecyclerLClickListner {");
         output.add("");
         for(String st : attributes){
             output.add(st);

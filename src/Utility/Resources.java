@@ -55,6 +55,7 @@ public class Resources {
         adapter.add("\tprivate LayoutInflater inflater;");
         adapter.add("\tprivate DataStructure data;");
         adapter.add("\tprivate RecyclerClickListner mRecyclerClickListner;");
+        adapter.add("\tprivate RecyclerLClickListner mRecyclerLClickListner;");
         adapter.add("\tprivate ArrayAdapter arrayAdapter;");
         adapter.add("");
         adapter.add("\tpublic ViewAdapter(Context context){");
@@ -77,7 +78,7 @@ public class Resources {
         adapter.add("\t\tmyViewHolder.tv.setText(row.texto1);");
         adapter.add("\t\tmyViewHolder.tv2.setText(row.texto2);");
         adapter.add("\t\tmyViewHolder.tv3.setText(row.texto3);");
-        adapter.add("\t\tmyViewHolder.iv.setImageURI(Uri.parse(row.img));");
+        adapter.add("\t\tif(row.img!=null){myViewHolder.iv.setImageURI(Uri.parse(row.img));}");
         adapter.add("\t}");
         adapter.add("");
         adapter.add("\t@Override");
@@ -89,7 +90,11 @@ public class Resources {
         adapter.add("\t\tmRecyclerClickListner = recyclerClickListner;");
         adapter.add("\t}");
         adapter.add("");
-        adapter.add("\tclass MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {");
+        adapter.add("\tpublic void setRecyclerLClickListner(RecyclerLClickListner recyclerLClickListner){");
+        adapter.add("\t\tmRecyclerLClickListner = recyclerLClickListner;");
+        adapter.add("\t}");
+        adapter.add("");
+        adapter.add("\tclass MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {");
         adapter.add("\t\tprivate TextView tv;");
         adapter.add("\t\tprivate TextView tv2;");
         adapter.add("\t\tprivate TextView tv3;");
@@ -98,6 +103,7 @@ public class Resources {
         adapter.add("\t\tpublic MyViewHolder(View itemView) {");
         adapter.add("\t\t\tsuper(itemView);");
         adapter.add("\t\t\titemView.setOnClickListener(this);");
+        adapter.add("\t\t\titemView.setOnLongClickListener(this);");
         adapter.add("\t\t\ttv = (TextView) itemView.findViewById(R.id.texto1);");
         adapter.add("\t\t\ttv2 = (TextView) itemView.findViewById(R.id.texto2);");
         adapter.add("\t\t\ttv3 = (TextView) itemView.findViewById(R.id.texto3);");
@@ -110,10 +116,22 @@ public class Resources {
         adapter.add("\t\t\t\tmRecyclerClickListner.itemClick(v, getPosition());");
         adapter.add("\t\t\t}");
         adapter.add("\t\t}");
+        adapter.add("");
+        adapter.add("\t\t@Override");
+        adapter.add("\t\tpublic boolean onLongClick(View v) {");
+        adapter.add("\t\t\tif (mRecyclerLClickListner != null) {");
+        adapter.add("\t\t\t\tmRecyclerLClickListner.itemLClick(v, getPosition());");
+        adapter.add("\t\t\t}");
+        adapter.add("\t\t\treturn true;");
+        adapter.add("\t\t}");
+
         adapter.add("\t}");
         adapter.add("");
         adapter.add("\tpublic interface RecyclerClickListner{");
         adapter.add("\t\tpublic void itemClick(View view, int position);");
+        adapter.add("\t}");
+        adapter.add("\tpublic interface RecyclerLClickListner{");
+        adapter.add("\t\tpublic void itemLClick(View view, int position);");
         adapter.add("\t}");
         adapter.add("}");
 
