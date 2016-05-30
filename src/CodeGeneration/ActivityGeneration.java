@@ -67,6 +67,17 @@ public class ActivityGeneration {
 
         Menu_Generation.generate(pathxml+"\\menu\\",Name+"_"+Type);
 
+        String CV="android.support.v7.widget.CardView";
+        ArrayList<String> CV_name=new ArrayList<>();    ArrayList<String> CV_atrib=new ArrayList<>();
+        CV_name.add("android:id");                      CV_atrib.add("@+id/cv");
+        CV_name.add("android:layout_height");           CV_atrib.add("wrap_content");
+        CV_name.add("android:layout_margin");           CV_atrib.add("5dp");
+        CV_name.add("android:layout_width");            CV_atrib.add("match_parent");
+        CV_name.add("card_view:cardCornerRadius");      CV_atrib.add("26dp");
+        CV_name.add("card_view:contentPadding");        CV_atrib.add("10dp");
+        CV_name.add("card_view:cardElevation");         CV_atrib.add("4dp");
+        CV_name.add("card_view:cardBackgroundColor");   CV_atrib.add("#FFFFFF");
+
         ArrayList<String> Coordinator_name=new ArrayList<>();
         ArrayList<String> Coordinator_atrib=new ArrayList<>();
         Coordinator_name.add("xmlns:android");                  Coordinator_atrib.add("http://schemas.android.com/apk/res/android");
@@ -101,7 +112,7 @@ public class ActivityGeneration {
         ArrayList<String> Collapse_img_atrib=new ArrayList<>();
         Collapse_img_name.add("android:id");                           Collapse_img_atrib.add("@+id/header");
         Collapse_img_name.add("android:layout_width");                 Collapse_img_atrib.add("match_parent");
-        Collapse_img_name.add("android:layout_height");                Collapse_img_atrib.add("300sp");
+        Collapse_img_name.add("android:layout_height");                Collapse_img_atrib.add("250sp");
         Collapse_img_name.add("android:fitsSystemWindows");            Collapse_img_atrib.add("true");
         Collapse_img_name.add("android:scaleType");                    Collapse_img_atrib.add("centerCrop");
         Collapse_img_name.add("app:layout_collapseMode");              Collapse_img_atrib.add("parallax");
@@ -121,6 +132,7 @@ public class ActivityGeneration {
         Nest_name.add("android:layout_height");                            Nest_atrib.add("wrap_content");
         Nest_name.add("app:layout_behavior");                              Nest_atrib.add("@string/appbar_scrolling_view_behavior");
         Nest_name.add("android:clipToPadding");                            Nest_atrib.add("false");
+        Nest_name.add("xmlns:card_view");                                  Nest_atrib.add("http://schemas.android.com/apk/res-auto");
 
         ArrayList<String> Layout_name=new ArrayList<>();
         ArrayList<String> Layout_atrib=new ArrayList<>();
@@ -210,11 +222,17 @@ public class ActivityGeneration {
             }
             element.appendChild(Nest);
 
+            Element CARD = document.createElement(CV);
+            for(int i=0;i<CV_name.size();i++){
+                CARD.setAttribute(CV_name.get(i), CV_atrib.get(i));
+            }
+            Nest.appendChild(CARD);
+
             Element Layout = document.createElement("RelativeLayout");
             for(int i=0;i<Layout_name.size();i++){
                 Layout.setAttribute(Layout_name.get(i), Layout_atrib.get(i));
             }
-            Nest.appendChild(Layout);
+            CARD.appendChild(Layout);
 
             Element fab = document.createElement("android.support.design.widget.FloatingActionButton");
             for(int i=0;i<fab_name.size();i++){
@@ -241,19 +259,23 @@ public class ActivityGeneration {
                             switch(Type){
                                 case "view":
                                     VALUE= document.createElement("ImageView");
+                                    VALUE.setAttribute("android:scaleType","centerCrop");
                                     break;
                                 case "edition":
                                     VALUE= document.createElement("ImageButton");
                                     VALUE.setAttribute("android:onClick","onClick");
+                                    VALUE.setAttribute("android:scaleType","centerCrop");
                                     break;
                             }
                         }else{
                             switch(Type){//android:inputType
                                 case "view":
                                     VALUE= document.createElement("TextView");
+                                    VALUE.setAttribute("android:gravity","center");
                                     break;
                                 case "edition":
                                     VALUE= document.createElement("EditText");
+                                    VALUE.setAttribute("android:gravity","center");
                                     if(attr_type.equals("string")){
                                         VALUE.setAttribute("android:inputType","text");
                                     }else{

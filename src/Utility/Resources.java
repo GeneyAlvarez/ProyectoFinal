@@ -11,13 +11,6 @@ import java.util.ArrayList;
  */
 public class Resources {
 
-    /*
-    compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.android.support:design:23.1.1'
-    compile 'com.android.support:recyclerview-v7:23.1.0'
-    compile 'com.android.support:cardview-v7:23.1.0'*/
-
-
     ArrayList<String> adapter=new ArrayList<>();
     ArrayList<String> dataStructure=new ArrayList<>();
     ArrayList<String> data=new ArrayList<>();
@@ -146,6 +139,7 @@ public class Resources {
         array.add("public class DataStructure {");
         array.add("\tprivate static DataStructure ourInstance =new DataStructure();");
         array.add("\tArrayList<Data> Arraytest=new ArrayList<Data>();");
+        array.add("\tArrayList<Data> Temp=new ArrayList<Data>();");
         array.add("");
         array.add("\tpublic static DataStructure getInstance() { return ourInstance; }");
         array.add("");
@@ -157,6 +151,36 @@ public class Resources {
         }
         array.add("");
         array.add("\t}");
+        array.add("");
+        array.add("\tpublic String getNameClass(Data dat){");
+        array.add("\t\tObject inf = dat.getOb();");
+        array.add("\t\tString class_object = \"\" + inf.getClass();");
+        array.add("\t\tint piv = class_object.split(\"\\\\.\").length;");
+        array.add("\t\tclass_object = class_object.split(\"\\\\.\")[piv - 1];");
+        array.add("\t\treturn class_object;");
+        array.add("\t}");
+        array.add("");
+
+        array.add("\tpublic void PULL(String classname){");
+        array.add("\t\tArrayList<Data> ArrayResult1=new ArrayList<Data>();// NEW ARRAYTEST");
+        array.add("\t\tArrayList<Data> ArrayResult2=new ArrayList<Data>();// ARRAY WITH ONLY CLASSNAME");
+        array.add("\t\tfor(int i=0;i<Arraytest.size();i++){");
+        array.add("\t\t\tData test=Arraytest.get(i);");
+        array.add("\t\t\tString class_name=getNameClass(test);");
+        array.add("\t\t\tif(class_name.equals(classname)){");
+        array.add("\t\t\t\tArrayResult1.add(test);");
+        array.add("\t\t\t}else{ArrayResult2.add(test);}}");
+        array.add("\t\tArraytest=ArrayResult1;");
+        array.add("\t\tTemp=ArrayResult2;");
+        array.add("\t}");
+
+        array.add("");
+        array.add("\tpublic void PUSH(){");
+        array.add("\t\tfor(Data dat : Temp){");
+        array.add("\t\t\tArraytest.add(dat);");
+        array.add("\t\t}");
+        array.add("\t}");
+        array.add("");
         array.add("}");
 
         return array;

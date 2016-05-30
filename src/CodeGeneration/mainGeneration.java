@@ -24,52 +24,68 @@ import org.xml.sax.SAXException;
  */
 public class mainGeneration {
 
-    public static void Start(String dirRes,String dirSrc, Project project,String pack,String Main,String Package){
+    public static void Start(String dirRes,String dirSrc, Project project,String pack,String Main, ArrayList<String> clases){
         final ErrorHandler errorHandler = new ErrorHandler();
 
-        xml(dirRes,errorHandler,project);
+        Menu_Generation.generate(dirRes.replace("layout","menu"),"formlist");
+        xml(dirRes,errorHandler,project,pack);
         custom_row(dirRes,errorHandler,project);
-        mainclass(dirSrc,Main,project,Package);
+        mainclass(dirSrc,Main,project,pack,clases);
         auxiliarclass(dirSrc,pack,project);
     }
 
-    public static void xml(String dir,ErrorHandler errorHandler,Project project){
-        String item="android.support.v7.widget.RecyclerView";
+    public static void xml(String dir,ErrorHandler errorHandler,Project project, String pack){
+        createMainXML(dir,errorHandler,project);
+        createFormListXML(dir,errorHandler,project,pack);
+    }
 
-        ArrayList<String> names=new ArrayList<>();
-        names.add("xmlns:android");
-        names.add("xmlns:tools");
-        names.add("android:layout_width");
-        names.add("android:layout_height");
-        names.add("android:paddingLeft");
-        names.add("android:paddingRight");
-        names.add("android:paddingTop");
-        names.add("android:paddingBottom");
-        names.add("android:background");
-        names.add("tools:context");
+    public static void createMainXML(String dir,ErrorHandler errorHandler,Project project){
+        String LL="LinearLayout";
+        ArrayList<String> LL_name=new ArrayList<>();              ArrayList<String> LL_atrib=new ArrayList<>();
+        LL_name.add("xmlns:android");                             LL_atrib.add("http://schemas.android.com/apk/res/android");
+        LL_name.add("xmlns:tools");                               LL_atrib.add("http://schemas.android.com/tools");
+        LL_name.add("android:layout_width");                      LL_atrib.add("match_parent");
+        LL_name.add("android:orientation");                       LL_atrib.add("vertical");
+        LL_name.add("android:paddingLeft");                       LL_atrib.add("@dimen/activity_horizontal_margin");
+        LL_name.add("android:paddingRight");                      LL_atrib.add("@dimen/activity_horizontal_margin");
+        LL_name.add("android:paddingTop");                        LL_atrib.add("@dimen/activity_vertical_margin");
+        LL_name.add("android:paddingBottom");                     LL_atrib.add("@dimen/activity_vertical_margin");
+        LL_name.add("android:layout_height");                     LL_atrib.add("match_parent");
+        LL_name.add("android:background");                        LL_atrib.add("@color/PrimaryLight");
+        LL_name.add("xmlns:card_view");                           LL_atrib.add("http://schemas.android.com/apk/res-auto");
+        LL_name.add("tools:context");                             LL_atrib.add(".MainActivity");
 
-        ArrayList<String> values=new ArrayList<>();
-        values.add("http://schemas.android.com/apk/res/android");
-        values.add("http://schemas.android.com/tools");
-        values.add("match_parent");
-        values.add("match_parent");
-        values.add("@dimen/activity_horizontal_margin");
-        values.add("@dimen/activity_horizontal_margin");
-        values.add("@dimen/activity_vertical_margin");
-        values.add("@dimen/activity_vertical_margin");
-        values.add("@color/PrimaryLight");
-        //conseguir el context del main activity!!!!!!!!!!!!!!!!!!!
-        values.add(".MainActivity");
+        String CV="android.support.v7.widget.CardView";
+        ArrayList<String> CV_name=new ArrayList<>();              ArrayList<String> CV_atrib=new ArrayList<>();
+        CV_name.add("android:id");                                CV_atrib.add("@+id/cv");
+        CV_name.add("android:layout_height");                     CV_atrib.add("wrap_content");
+        CV_name.add("android:layout_margin");                     CV_atrib.add("5dp");
+        CV_name.add("android:layout_width");                      CV_atrib.add("match_parent");
+        CV_name.add("card_view:cardCornerRadius");                CV_atrib.add("26dp");
+        CV_name.add("card_view:contentPadding");                  CV_atrib.add("10dp");
+        CV_name.add("card_view:cardElevation");                   CV_atrib.add("4dp");
+        CV_name.add("card_view:cardBackgroundColor");             CV_atrib.add("#FFFFFF");
 
-        ArrayList<String> names2=new ArrayList<>();
-        names2.add("android:id");
-        names2.add("android:layout_width");
-        names2.add("android:layout_height");
+        String TV="TextView";
+        ArrayList<String> TV_name=new ArrayList<>();              ArrayList<String> TV_atrib=new ArrayList<>();
+        TV_name.add("android:id");                                TV_atrib.add("@+id/tv");
+        TV_name.add("android:fontFamily");                        TV_atrib.add("sans-serif-condensed");
+        TV_name.add("android:layout_width");                      TV_atrib.add("match_parent");
+        TV_name.add("android:layout_height");                     TV_atrib.add("wrap_content");
+        TV_name.add("android:textSize");                          TV_atrib.add("30dp");
+        TV_name.add("android:textColor");                         TV_atrib.add("#000000");
+        TV_name.add("android:text");                              TV_atrib.add("Select a class");
 
-        ArrayList<String> values2=new ArrayList<>();
-        values2.add("@+id/recycle");
-        values2.add("match_parent");
-        values2.add("wrap_content");
+        String LV="ListView";
+        ArrayList<String> LV_name=new ArrayList<>();              ArrayList<String> LV_atrib=new ArrayList<>();
+        LV_name.add("android:textColor");                         LV_atrib.add("#ffffff");
+        LV_name.add("android:layout_width");                      LV_atrib.add("match_parent");
+        LV_name.add("android:layout_height");                     LV_atrib.add("match_parent");
+        LV_name.add("android:id");                                LV_atrib.add("@+id/lv");
+        LV_name.add("android:layout_below");                      LV_atrib.add("@+id/tv");
+        LV_name.add("android:layout_marginTop");                  LV_atrib.add("40dp");
+        LV_name.add("android:textSize");                          LV_atrib.add("20dp");
+        LV_name.add("android:layout_centerHorizontal");           LV_atrib.add("true");
 
         try {
 
@@ -77,18 +93,29 @@ public class mainGeneration {
             DocumentBuilder builder = docFactory.newDocumentBuilder();
             Document document = builder.newDocument();
 
-            Element element = document.createElement("RelativeLayout");//root element
-
-            for(int i=0;i<10;i++){
-                element.setAttribute(names.get(i), values.get(i));
+            Element element = document.createElement(LL);
+            for(int i=0;i<LL_name.size();i++){
+                element.setAttribute(LL_name.get(i), LL_atrib.get(i));
             }
             document.appendChild(element);
 
-            Element childElement = document.createElement(item);
-            for(int i=0;i<3;i++){
-                childElement.setAttribute(names2.get(i), values2.get(i));
+            Element element2 = document.createElement(CV);
+            for(int i=0;i<CV_name.size();i++){
+                element2.setAttribute(CV_name.get(i), CV_atrib.get(i));
             }
-            element.appendChild(childElement);
+            element.appendChild(element2);
+
+            Element element3 = document.createElement(TV);
+            for(int i=0;i<TV_name.size();i++){
+                element3.setAttribute(TV_name.get(i), TV_atrib.get(i));
+            }
+            element2.appendChild(element3);
+
+            Element element4 = document.createElement(LV);
+            for(int i=0;i<LV_name.size();i++){
+                element4.setAttribute(LV_name.get(i), LV_atrib.get(i));
+            }
+            element2.appendChild(element4);
 
             TransformerFactory transFactory = TransformerFactory.newInstance();
             Transformer transformer = transFactory.newTransformer();
@@ -104,63 +131,124 @@ public class mainGeneration {
             errorHandler.handleError(project, e);
         }
 
+
+    }
+
+    public static void createFormListXML(String dir,ErrorHandler errorHandler,Project project, String Package){
+        String RL="RelativeLayout";
+        ArrayList<String> RL_name=new ArrayList<>();              ArrayList<String> RL_atrib=new ArrayList<>();
+        RL_name.add("xmlns:app");                                 RL_atrib.add("http://schemas.android.com/apk/res-auto");
+        RL_name.add("xmlns:android");                             RL_atrib.add("http://schemas.android.com/apk/res/android");
+        RL_name.add("xmlns:tools");                               RL_atrib.add("http://schemas.android.com/tools");
+        RL_name.add("android:background");                        RL_atrib.add("@color/PrimaryLight");
+        RL_name.add("android:layout_height");                     RL_atrib.add("match_parent");
+        RL_name.add("android:layout_width");                      RL_atrib.add("match_parent");
+        RL_name.add("android:paddingBottom");                     RL_atrib.add("@dimen/activity_vertical_margin");
+        RL_name.add("android:paddingLeft");                       RL_atrib.add("@dimen/activity_horizontal_margin");
+        RL_name.add("android:paddingRight");                      RL_atrib.add("@dimen/activity_horizontal_margin");
+        RL_name.add("android:paddingTop");                        RL_atrib.add("@dimen/activity_vertical_margin");
+        RL_name.add("tools:context");                             RL_atrib.add(Package+".formlist");
+
+        String RV="android.support.v7.widget.RecyclerView";
+        ArrayList<String> RV_name=new ArrayList<>();              ArrayList<String> RV_atrib=new ArrayList<>();
+        RV_name.add("android:id");                                RV_atrib.add("@+id/recycle");
+        RV_name.add("android:layout_height");                     RV_atrib.add("wrap_content");
+        RV_name.add("android:layout_width");                      RV_atrib.add("match_parent");
+
+        String FAB="android.support.design.widget.FloatingActionButton";
+        ArrayList<String> FAB_name=new ArrayList<>();              ArrayList<String> FAB_atrib=new ArrayList<>();
+        FAB_name.add("android:clickable");                              FAB_atrib.add("true");
+        FAB_name.add("android:id");                                     FAB_atrib.add("@+id/fab");
+        FAB_name.add("android:layout_height");                          FAB_atrib.add("wrap_content");
+        FAB_name.add("android:layout_width");                           FAB_atrib.add("wrap_content");
+        FAB_name.add("android:onClick");                                FAB_atrib.add("FAB_Click");
+        FAB_name.add("app:elevation");                                  FAB_atrib.add("6dp");
+        FAB_name.add("app:layout_anchorGravity");                       FAB_atrib.add("bottom|right|end");
+        FAB_name.add("app:rippleColor");                                FAB_atrib.add("@android:color/white");
+        FAB_name.add("android:layout_alignParentBottom");               FAB_atrib.add("true");
+        FAB_name.add("android:layout_alignRight");                      FAB_atrib.add("@+id/recycle");
+        FAB_name.add("android:layout_alignEnd");                        FAB_atrib.add("@+id/recycle");
+
+
+        try {
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = docFactory.newDocumentBuilder();
+            Document document = builder.newDocument();
+
+            Element element = document.createElement(RL);
+            for(int i=0;i<RL_name.size();i++){
+                element.setAttribute(RL_name.get(i), RL_atrib.get(i));
+            }
+            document.appendChild(element);
+
+            Element element2 = document.createElement(RV);
+            for(int i=0;i<RV_name.size();i++){
+                element2.setAttribute(RV_name.get(i), RV_atrib.get(i));
+            }
+            element.appendChild(element2);
+
+            Element element3 = document.createElement(FAB);
+            for(int i=0;i<FAB_name.size();i++){
+                element3.setAttribute(FAB_name.get(i), FAB_atrib.get(i));
+            }
+            element.appendChild(element3);
+
+            TransformerFactory transFactory = TransformerFactory.newInstance();
+            Transformer transformer = transFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+
+            Result output = new StreamResult(new File(dir+"activity_formlist.xml"));
+            Source input = new DOMSource(document);
+            transformer.transform(input, output);
+
+        }catch(Exception e) {
+            errorHandler.handleError(project, e);
+        }
     }
 
     public static void custom_row(String dir,ErrorHandler errorHandler,Project project){
 
         String card="android.support.v7.widget.CardView";
 
-        ArrayList<String> rootname=new ArrayList<>();
-        rootname.add("xmlns:android");
-        rootname.add("android:orientation");
-        rootname.add("android:layout_width");
-        rootname.add("xmlns:app");
-        rootname.add("android:layout_height");
-        ArrayList<String> rootattrib=new ArrayList<>();
-        rootattrib.add("http://schemas.android.com/apk/res/android");
-        rootattrib.add("vertical");
-        rootattrib.add("match_parent");
-        rootattrib.add("http://schemas.android.com/apk/res-auto");
-        rootattrib.add("match_parent");
+        ArrayList<String> rootname=new ArrayList<>();       ArrayList<String> rootattrib=new ArrayList<>();
+        rootname.add("xmlns:android");                      rootattrib.add("http://schemas.android.com/apk/res/android");
+        rootname.add("android:layout_height");              rootattrib.add("match_parent");
+        rootname.add("android:layout_width");               rootattrib.add("match_parent");
+        rootname.add("android:orientation");                rootattrib.add("vertical");
+        rootname.add("xmlns:card_view");                    rootattrib.add("http://schemas.android.com/apk/res-auto");
+        rootname.add("android:padding");                    rootattrib.add("8dp");
 
-        ArrayList<String> cardname=new ArrayList<>();
-        cardname.add("android:id");
-        cardname.add("android:elevation");
-        cardname.add("android:layout_margin");
-        cardname.add("android:layout_width");
-        cardname.add("app:cardCornerRadius");
-        cardname.add("android:layout_height");
-        ArrayList<String> cardattrib=new ArrayList<>();
-        cardattrib.add("@+id/cv");
-        cardattrib.add("5dp");
-        cardattrib.add("10dp");
-        cardattrib.add("match_parent");
-        cardattrib.add("2dp");
-        cardattrib.add("wrap_content");
 
-        ArrayList<String> layoutname=new ArrayList<>();
-        layoutname.add("android:background");//"@color/ColorPrimaryDark"
-        layoutname.add("android:layout_width");
-        layoutname.add("android:layout_height");
-        layoutname.add("android:padding");
-        layoutname.add("android:focusableInTouchMode");
-        layoutname.add("android:elevation");
-        ArrayList<String> layoutattrib=new ArrayList<>();
-        layoutattrib.add("@color/ColorPrimaryDark");
-        layoutattrib.add("match_parent");
-        layoutattrib.add("wrap_content");
-        layoutattrib.add("16dp");
-        layoutattrib.add("false");
-        layoutattrib.add("20dp");
+        ArrayList<String> cardname=new ArrayList<>();       ArrayList<String> cardattrib=new ArrayList<>();
+        cardname.add("android:id");                         cardattrib.add("@+id/cv");
+        cardname.add("android:layout_height");              cardattrib.add("wrap_content");
+        cardname.add("card_view:cardCornerRadius");         cardattrib.add("15dp");
+        cardname.add("android:layout_width");               cardattrib.add("match_parent");
+        cardname.add("card_view:cardElevation");            cardattrib.add("10dp");
+        cardname.add("card_view:cardBackgroundColor");      cardattrib.add("#FFFFFF");
+
+
+
+        ArrayList<String> layoutname=new ArrayList<>();        ArrayList<String> layoutattrib=new ArrayList<>();
+        layoutname.add("android:elevation");                   layoutattrib.add("20dp");
+        layoutname.add("android:focusableInTouchMode");        layoutattrib.add("false");
+        layoutname.add("android:layout_height");               layoutattrib.add("wrap_content");
+        layoutname.add("android:layout_width");                layoutattrib.add("match_parent");
+
 
         //Contenido del cardview-------------
-        ArrayList<String> ImgName=new ArrayList<>();
-        ArrayList<String> ImgValue=new ArrayList<>();
-
+        ArrayList<String> ImgName=new ArrayList<>();ArrayList<String> ImgValue=new ArrayList<>();
         ImgName.add("android:layout_width");ImgValue.add("100dp");
         ImgName.add("android:layout_height");ImgValue.add("100dp");
         ImgName.add("android:id");ImgValue.add("@+id/img");
-         //-----------------
+        ImgName.add("android:layout_alignParentLeft");ImgValue.add("true");
+        ImgName.add("android:layout_alignParentTop");ImgValue.add("true");
+        ImgName.add("android:layout_marginRight");ImgValue.add("10dp");
+        ImgName.add("android:scaleType");ImgValue.add("centerCrop");
+
+        //-----------------
         ArrayList<String> TextName=new ArrayList<>();
         ArrayList<String> TextValue=new ArrayList<>();
 
@@ -168,9 +256,8 @@ public class mainGeneration {
         TextName.add("android:layout_width");TextValue.add("wrap_content");
         TextName.add("android:layout_height");TextValue.add("wrap_content");
         TextName.add("android:layout_toRightOf");TextValue.add("@+id/img");
-        TextName.add("android:layout_toEndOf");TextValue.add("@+id/img");
-        TextName.add("android:padding");TextValue.add("10dp");
-        TextName.add("android:textSize");TextValue.add("15sp");
+        TextName.add("android:layout_alignParentTop");TextValue.add("true");
+        TextName.add("android:textSize");TextValue.add("20sp");
 
 
         //-----------------
@@ -182,8 +269,7 @@ public class mainGeneration {
         Text2Name.add("android:layout_height");Text2Value.add("wrap_content");
         Text2Name.add("android:layout_below");Text2Value.add("@+id/texto1");
         Text2Name.add("android:layout_toRightOf");Text2Value.add("@+id/img");
-        Text2Name.add("android:textSize");Text2Value.add("15sp");
-        Text2Name.add("android:padding");Text2Value.add("10dp");
+        Text2Name.add("android:textSize");Text2Value.add("12sp");
 
 
         //-----------------
@@ -193,10 +279,8 @@ public class mainGeneration {
         Text3Name.add("android:layout_width");Text3Value.add("wrap_content");
         Text3Name.add("android:layout_height");Text3Value.add("wrap_content");
         Text3Name.add("android:id");Text3Value.add("@+id/texto3");
-        Text3Name.add("android:textSize");Text3Value.add("15sp");
-        Text3Name.add("android:padding");Text3Value.add("10dp");
+        Text3Name.add("android:textSize");Text3Value.add("12sp");
         Text3Name.add("android:layout_toRightOf");Text3Value.add("@+id/img");
-        Text3Name.add("android:layout_toEndOf");Text3Value.add("@+id/texto2");
         Text3Name.add("android:layout_below");Text3Value.add("@+id/texto2");
 
 
@@ -266,7 +350,93 @@ public class mainGeneration {
 
     }
 
-    public static void mainclass(String dir,String MainLocation,Project project,String Package){
+    public static void mainclass(String dir,String MainLocation,Project project,String Package,ArrayList<String> clases){
+        createMainCLASS(dir,MainLocation,project,Package,clases);
+        createFromCLASS(dir,MainLocation,project,Package,clases);
+    }
+
+    public static void createMainCLASS(String dir,String MainLocation,Project project,String Package,ArrayList<String> clases){
+        ArrayList<String> output=new ArrayList<>();
+
+        String arraycito="";
+        for(int i=0;i<clases.size();i++){
+            if(i==0){
+                arraycito+="\""+clases.get(i)+"\"";
+            }else{
+                arraycito+=",\""+clases.get(i)+"\"";
+            }
+        }
+
+        output.add("package "+Package+";");
+        output.add("");
+        output.add("import android.content.Intent;");
+        output.add("import android.support.v7.app.AppCompatActivity;");
+        output.add("import android.os.Bundle;");
+        output.add("import android.view.Menu;");
+        output.add("import android.view.MenuItem;");
+        output.add("import android.view.View;");
+        output.add("import android.widget.AdapterView;");
+        output.add("import android.widget.ArrayAdapter;");
+        output.add("import android.widget.ListView;");
+        output.add("");
+        output.add("public class MainActivity extends AppCompatActivity {");
+
+        output.add("\tListView listView;");
+        output.add("");
+
+        output.add("\t@Override");
+        output.add("\tprotected void onCreate(Bundle savedInstanceState) {");
+        output.add("\t\tsuper.onCreate(savedInstanceState);");
+        output.add("\t\tsetContentView(R.layout.activity_main);");
+        output.add("\t\tlistView = (ListView) findViewById(R.id.lv);");
+        output.add("\t\tString[] values = new String[] { "+arraycito+" };");
+        output.add("\t\tArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, values);");
+        output.add("\t\tlistView.setAdapter(adapter);");
+        output.add("\t\tlistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {");
+        output.add("\t\t\t@Override");
+        output.add("\t\t\tpublic void onItemClick(AdapterView<?> parent, View view, int position, long id) {");
+        output.add("\t\t\t\tString  content  = (String) listView.getItemAtPosition(position);");
+        output.add("\t\t\t\tIntent intent = new Intent(MainActivity.this, formlist.class);");
+        output.add("\t\t\t\tintent.putExtra(\"CLASSNAMESELECTED\", content);");
+        output.add("\t\t\t\tstartActivity(intent);}");
+        output.add("\t\t});");
+        output.add("\t}");
+
+        output.add("");
+        output.add("\t@Override");
+        output.add("\tpublic boolean onOptionsItemSelected(MenuItem item) {");
+        output.add("\t\tint id = item.getItemId();");
+        output.add("\t\tif (id == R.id.action_settings) {");
+        output.add("\t\t\treturn true;}");
+        output.add("\t\treturn super.onOptionsItemSelected(item);");
+        output.add("\t}");
+
+        output.add("");
+        output.add("\t@Override");
+        output.add("\tpublic boolean onCreateOptionsMenu(Menu menu) {");
+        output.add("\t\tgetMenuInflater().inflate(R.menu.menu_main, menu);");
+        output.add("\t\treturn true;");
+        output.add("\t}");
+
+        output.add("}");
+
+        File f=new File(MainLocation);
+        PrintWriter writer = null;
+        try {
+            writer = new PrintWriter(f, "UTF-8");
+            for (String anOutput : output) {
+                writer.println(anOutput);
+            }
+            writer.close();
+        } catch (FileNotFoundException | UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+
+
+    }
+
+    public static void createFromCLASS(String dir,String MainLocation,Project project,String Package,ArrayList<String> clases){
         ArrayList<String> output=new ArrayList<>();
 
         String pack="package "+Package+";";
@@ -275,9 +445,9 @@ public class mainGeneration {
         imports.add("import android.support.v7.app.AppCompatActivity;");
         imports.add("import android.os.Bundle;");
         imports.add("import android.content.SharedPreferences;");
-        imports.add("import android.preference.PreferenceManager;");
         imports.add("import android.content.SharedPreferences.Editor;");
         imports.add("import android.view.Menu;");
+        imports.add("import java.util.ArrayList;");
         imports.add("import android.view.MenuItem;");
         imports.add("import android.app.AlertDialog;");
         imports.add("import android.content.Context;");
@@ -293,41 +463,57 @@ public class mainGeneration {
         attributes.add("\tDataStructure De=DataStructure.getInstance();");
         attributes.add("\tprivate ViewAdapter viewAdapter;");
         attributes.add("\tprivate RecyclerView mRecyclerView;");
-
+        attributes.add("\tString classname;");
 
         ArrayList<String> oncreate=new ArrayList<>();
         oncreate.add("\t@Override");
         oncreate.add("\tprotected void onCreate(Bundle savedInstanceState) {");
-        oncreate.add("\t\tsuper.onCreate(savedInstanceState);");
-        oncreate.add("\t\tsetContentView(R.layout.activity_main);");
-        oncreate.add("\t\tmRecyclerView=(RecyclerView)findViewById(R.id.recycle);");
-        oncreate.add("\t\tviewAdapter= new ViewAdapter(this);");
-        oncreate.add("\t\tviewAdapter.setRecyclerClickListner(this);");
-        oncreate.add("\t\tviewAdapter.setRecyclerLClickListner(this);");
-        oncreate.add("\t\tmRecyclerView.setAdapter(viewAdapter);");
-        oncreate.add("\t\tmRecyclerView.setLayoutManager(new LinearLayoutManager(this));");
+        oncreate.add("\tsuper.onCreate(savedInstanceState);");
+        oncreate.add("\tsetContentView(R.layout.activity_formlist);");
+        oncreate.add("\tIntent startingIntent = getIntent();");
+        oncreate.add("\tclassname = startingIntent.getStringExtra(\"CLASSNAMESELECTED\");");
+        oncreate.add("\tDe.PULL(classname);");
+        oncreate.add("\tmRecyclerView=(RecyclerView)findViewById(R.id.recycle);");
+        oncreate.add("\tviewAdapter= new ViewAdapter(this);");
+        oncreate.add("\tviewAdapter.setRecyclerClickListner(this);");
+        oncreate.add("\tviewAdapter.setRecyclerLClickListner(this);");
+        oncreate.add("\tmRecyclerView.setAdapter(viewAdapter);");
+        oncreate.add("\tmRecyclerView.setLayoutManager(new LinearLayoutManager(this));");
         oncreate.add("\t}");
 
-        ArrayList<String> onresume=new ArrayList<>();
-        onresume.add("\t@Override");
-        onresume.add("\tpublic void onResume(){");
-        onresume.add("\t\tsuper.onResume();");
-        onresume.add("\t\tviewAdapter= new ViewAdapter(this);");
-        onresume.add("\t\tviewAdapter.setRecyclerClickListner(this);");
-        onresume.add("\t\tviewAdapter.setRecyclerLClickListner(this);");
-        onresume.add("\t\tmRecyclerView.setAdapter(viewAdapter);");
-        onresume.add("\t\tmRecyclerView.setLayoutManager(new LinearLayoutManager(this));");
-        onresume.add("\t\tContext context = getApplicationContext();");
-        onresume.add("\t\tCharSequence text = \"Resume\";");
-        onresume.add("\t\tint duration = Toast.LENGTH_SHORT;");
-        onresume.add("\t\tToast toast = Toast.makeText(context,text, duration);");
-        onresume.add("\t\ttoast.show();");
-        onresume.add("\t}");
-
+        ArrayList<String> subs=new ArrayList<>();
+        subs.add("\t@Override");
+        subs.add("\tpublic void onResume(){");
+        subs.add("\t\tsuper.onResume();");
+        subs.add("\t\tviewAdapter.notifyDataSetChanged();}");
+        subs.add("");
+        subs.add("\t@Override");
+        subs.add("\tpublic void onDestroy() {");
+        subs.add("\t\tsuper.onDestroy();");
+        subs.add("\t\tDe.PUSH();}");
+        subs.add("");
+        subs.add("\t@Override");
+        subs.add("\tpublic boolean onOptionsItemSelected(MenuItem item) {");
+        subs.add("\t\tint id = item.getItemId();");
+        subs.add("\t\tif (id == R.id.action_settings) {");
+        subs.add("\t\t\treturn true;}");
+        subs.add("\t\treturn super.onOptionsItemSelected(item);}");
+        subs.add("");
+        subs.add("\t@Override");
+        subs.add("\tpublic boolean onCreateOptionsMenu(Menu menu) {");
+        subs.add("\t\tgetMenuInflater().inflate(R.menu.menu_formlist, menu);");
+        subs.add("\t\treturn true;}");
+        subs.add("");
+        subs.add("\t@Override");
+        subs.add("\tpublic void itemClick(View view, int position) {");
+        subs.add("\t\tsaltar(position);}");
+        subs.add("");
+        subs.add("\t@Override");
+        subs.add("\tpublic void itemLClick(View view, int position) {");
+        subs.add("\t\tsaltar2(position, view);}");
 
         ArrayList<String> onjump=new ArrayList<>();
         onjump.add("\tpublic void saltar(final int position){");
-
         onjump.add("\t\tData dat=De.Arraytest.get(position);");
         onjump.add("\t\tObject inf=dat.getOb();");
         onjump.add("\t\tString class_object=\"\"+inf.getClass();");
@@ -344,76 +530,44 @@ public class mainGeneration {
         onjump.add("\t\tsavePreferences(\"INDEX\",position);");
         onjump.add("\t\tstartActivity(i);");
         onjump.add("\t}");
+        onjump.add("");
         onjump.add("\tpublic void saltar2(final int position, View view){");
-        onjump.add("\t\tPopupMenu popup = new PopupMenu(MainActivity.this,view);");
-        onjump.add("\t\tpopup.getMenuInflater().inflate(R.menu.pop_up_menu, popup.getMenu());");
-        onjump.add("\t");
-        onjump.add("\t\tpopup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {");
-        onjump.add("\t\t\t@TargetApi(Build.VERSION_CODES.HONEYCOMB)");
-        onjump.add("\t\t\tpublic boolean onMenuItemClick(MenuItem item) {");
-        onjump.add("\t\t\t\tString option=item.getTitle().toString();");
-        onjump.add("\t\t\t\tif(option.equals(\"Edit\")){");
-        onjump.add("\t\t\t\t\tData dat=De.Arraytest.get(position);");
-        onjump.add("\t\t\t\t\tObject inf=dat.getOb();");
-        onjump.add("\t\t\t\t\tString class_object=\"\"+inf.getClass();");
-        onjump.add("\t\t\t\t\tint piv=class_object.split(\"\\\\.\").length;");
-        onjump.add("\t\t\t\t\tclass_object=class_object.split(\"\\\\.\")[piv-1];");
-        onjump.add("\t\t\t\t\tIntent i;");
-        onjump.add("\t\t\t\t\tString c_name=\""+Package+".\"+class_object+\"_edition\";");
-        onjump.add("\t\t\t\t\tClass<?> c = null;");
-        onjump.add("\t\t\t\t\ttry {");
-        onjump.add("\t\t\t\t\t\tc = Class.forName(c_name);");
-        onjump.add("\t\t\t\t\t} catch (ClassNotFoundException e) {");
-        onjump.add("\t\t\t\t\t\te.printStackTrace();}");
-        onjump.add("\t\t\t\t\ti = new Intent(context,c);");
-        onjump.add("\t\t\t\t\tsavePreferences(\"INDEX\",position);");
-        onjump.add("\t\t\t\t\tstartActivity(i);");
-        onjump.add("\t\t\t\t}else{");
-        onjump.add("\t\t\t\t\tif(option.equals(\"Delete\")){");
-        onjump.add("\t\t\t\t\t\tDe.Arraytest.remove(position);");
-        onjump.add("\t\t\t\t\t\trecreate();");
+        onjump.add("\t\tAlertDialog.Builder builder = new AlertDialog.Builder(this);");
+        onjump.add("\t\tbuilder.setTitle(\"Select Action\");");
+        onjump.add("\t\tbuilder.setItems(new CharSequence[] {\"Edit\", \"Remove\", \"Cancel\"},");
+        onjump.add("\t\t\tnew DialogInterface.OnClickListener() {");
+        onjump.add("\t\t\t\tpublic void onClick(DialogInterface dialog, int which) {");
+        onjump.add("\t\t\t\t\tswitch (which) {");
+        onjump.add("\t\t\t\t\t\tcase 0:");
+        onjump.add("\t\t\t\t\t\t\t\tData dat = De.Arraytest.get(position);");
+        onjump.add("\t\t\t\t\t\t\t\tObject inf = dat.getOb();");
+        onjump.add("\t\t\t\t\t\t\t\tString class_object = \"\" + inf.getClass();");
+        onjump.add("\t\t\t\t\t\t\t\tint piv = class_object.split(\"\\\\.\").length;");
+        onjump.add("\t\t\t\t\t\t\t\tclass_object = class_object.split(\"\\\\.\")[piv - 1];");
+        onjump.add("\t\t\t\t\t\t\t\tIntent i;");
+        onjump.add("\t\t\t\t\t\t\t\tString c_name = \""+Package+".\" + class_object + \"_edition\";");
+        onjump.add("\t\t\t\t\t\t\t\tClass<?> c = null;");
+        onjump.add("\t\t\t\t\t\t\t\ttry {");
+        onjump.add("\t\t\t\t\t\t\t\t\tc = Class.forName(c_name);");
+        onjump.add("\t\t\t\t\t\t\t\t} catch (ClassNotFoundException e) {");
+        onjump.add("\t\t\t\t\t\t\t\t\te.printStackTrace();");
+        onjump.add("\t\t\t\t\t\t\t\t}");
+        onjump.add("\t\t\t\t\t\t\t\ti = new Intent(context, c);");
+        onjump.add("\t\t\t\t\t\t\t\tsavePreferences(\"INDEX\", position);");
+        onjump.add("\t\t\t\t\t\t\t\tstartActivity(i);");
+        onjump.add("\t\t\t\t\t\t\t\tbreak;");
+        onjump.add("\t\t\t\t\t\tcase 1:");
+        onjump.add("\t\t\t\t\t\t\tDe.Arraytest.remove(position);");
+        onjump.add("\t\t\t\t\t\t\tmRecyclerView.setAdapter(viewAdapter);");
+        onjump.add("\t\t\t\t\t\t\tmRecyclerView.setLayoutManager(new LinearLayoutManager(context));");
+        onjump.add("\t\t\t\t\t\t\tbreak;");
+        onjump.add("\t\t\t\t\t\tcase 2:");
+        onjump.add("\t\t\t\t\t\t\tbreak;");
         onjump.add("\t\t\t\t\t}");
         onjump.add("\t\t\t\t}");
-        onjump.add("\t\t\t\tToast.makeText(MainActivity.this,\"You Clicked : \" + item.getTitle(),Toast.LENGTH_SHORT).show();");
-        onjump.add("\t\t\t\treturn true;");
-        onjump.add("\t\t\t}");
-        onjump.add("\t\t});");
-        onjump.add("\t\tpopup.show();");
+        onjump.add("\t\t\t});");
+        onjump.add("\t\tbuilder.create().show();");
         onjump.add("\t}");
-
-
-
-
-
-        ArrayList<String> oncreateoptionsmenu=new ArrayList<>();
-        oncreateoptionsmenu.add("\t@Override");
-        oncreateoptionsmenu.add("\tpublic boolean onCreateOptionsMenu(Menu menu) {");
-        oncreateoptionsmenu.add("\t\tgetMenuInflater().inflate(R.menu.menu_main, menu);");
-        oncreateoptionsmenu.add("\t\treturn true;");
-        oncreateoptionsmenu.add("\t}");
-
-        ArrayList<String> onoptionselected=new ArrayList<>();
-        onoptionselected.add("\t@Override");
-        onoptionselected.add("\tpublic boolean onOptionsItemSelected(MenuItem item) {");
-        onoptionselected.add("\t\tint id = item.getItemId();");
-        onoptionselected.add("\t\tif (id == R.id.action_settings) {");
-        onoptionselected.add("\t\t\treturn true;");
-        onoptionselected.add("\t\t}");
-        onoptionselected.add("\t\treturn super.onOptionsItemSelected(item);");
-        onoptionselected.add("\t}");
-
-        ArrayList<String> itemclick=new ArrayList<>();
-        itemclick.add("\t@Override");
-        itemclick.add("\tpublic void itemClick(View view, int position) {");
-        itemclick.add("\t\tSystem.out.println(\"--->Clicked\");");
-        itemclick.add("\t\t//saltar(position);");
-        itemclick.add("\t}");
-        itemclick.add("\t");
-        itemclick.add("\t@Override");
-        itemclick.add("\tpublic void itemLClick(View view, int position) {");
-        itemclick.add("\t\tSystem.out.println(\"--->LongClicked\");");
-        itemclick.add("\t\t//saltar2(position);");
-        itemclick.add("\t}");
 
         ArrayList<String> Share=new ArrayList<>();
         Share.add("\tprivate void savePreferences(String key, int value) {");
@@ -423,16 +577,31 @@ public class mainGeneration {
         Share.add("\t\teditor.commit();");
         Share.add("\t}");
 
+        ArrayList<String> FAB=new ArrayList<>();
+        FAB.add("\tpublic void FAB_Click(View v){");
+        FAB.add("\t\tswitch (classname) {");
+        for(int i=0;i<clases.size();i++){
+            FAB.add("\t\t\tcase \""+clases.get(i)+"\":");
+            FAB.add("\t\t\t\t"+clases.get(i)+" info"+i+" = new "+clases.get(i)+"();");
+            FAB.add("\t\t\t\tRow row"+i+" new Row(info"+i+".getFirst(), info"+i+".getSecond(), info"+i+".getThird(), info"+i+".getIcon();");
+            FAB.add("\t\t\t\tData dat"+i+" = new Data(info"+i+", row"+i+");");
+            FAB.add("\t\t\t\tDe.Arraytest.add(dat"+i+")");
+            FAB.add("\t\t\t\tbreak;");
+        }
+        FAB.add("\t\t}");
+        FAB.add("\t\tviewAdapter.notifyDataSetChanged();");
+        FAB.add("\t}");
 
-        //------------
+//------------
         output.add(pack);
         output.add("");
         for(String st : imports){
             output.add(st);
         }
         output.add("");
-        output.add("public class MainActivity extends AppCompatActivity implements ViewAdapter.RecyclerClickListner, ViewAdapter.RecyclerLClickListner {");
+        output.add("public class formlist extends AppCompatActivity implements ViewAdapter.RecyclerClickListner, ViewAdapter.RecyclerLClickListner {");
         output.add("");
+
         for(String st : attributes){
             output.add(st);
         }
@@ -440,33 +609,25 @@ public class mainGeneration {
         for(String st : oncreate){
             output.add(st);
         }
-        output.add("");
-        for(String st : onresume){
+
+        for(String st :subs){
             output.add(st);
         }
         output.add("");
         for(String st : onjump){
             output.add(st);
         }
-        output.add("");
-        for(String st : onoptionselected){
-            output.add(st);
-        }
-        output.add("");
-        for(String st : oncreateoptionsmenu){
-            output.add(st);
-        }
-        output.add("");
-        for(String st : itemclick){
-            output.add(st);
-        }
-        output.add("");
+
         for(String st : Share){
+            output.add(st);
+        }
+        output.add("");
+        for(String st : FAB){
             output.add(st);
         }
         output.add("}");
 
-        File f=new File(MainLocation);
+        File f=new File(dir+"\\"+"formlist.java");
         PrintWriter writer = null;
         try {
             writer = new PrintWriter(f, "UTF-8");
@@ -493,12 +654,8 @@ public class mainGeneration {
     }
 
     public static Document manifest(String path) {
-        //byte[] myByteArray;
         File f=new File(path+"\\AndroidManifest.xml");
-            //myByteArray=vf.contentsToByteArray();
-            //FileOutputStream fos = new FileOutputStream("C:\\Users\\Necho\\Desktop"+"\\AndroidManifest.xml");
-            //fos.write(myByteArray);
-            //fos.close();
+
         Document document = null;
         DocumentBuilder builder = null;
         try {
@@ -628,18 +785,6 @@ public class mainGeneration {
         DocumentBuilder builder = null;
 
         try {
-            /*
-            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-            builder = docFactory.newDocumentBuilder();
-            document = builder.parse(f);
-
-            TransformerFactory transFactory = TransformerFactory.newInstance();
-            Transformer transformer = transFactory.newTransformer();
-
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-            document.setXmlStandalone(true);*/
-
             File check=new File(path+"\\AndroidManifest.xml");
             BufferedReader br = new BufferedReader(new FileReader(check));
 
@@ -666,10 +811,6 @@ public class mainGeneration {
 
             check.delete();
             temp.renameTo(check);
-/*
-            Result output = new StreamResult(new File(path+"\\AndroidManifest.xml"));
-            Source input = new DOMSource(document);
-            transformer.transform(input, output);*/
 
         } catch ( IOException e) {
             e.printStackTrace();

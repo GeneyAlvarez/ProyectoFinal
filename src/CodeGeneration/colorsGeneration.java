@@ -23,19 +23,17 @@ public class colorsGeneration {
         final ErrorHandler errorHandler = new ErrorHandler();
 
         String elements="color";
-        String name="name";
+        String name="\nname";
 
-        ArrayList<String> value=new ArrayList<>();
-        value.add("ColorPrimary");
-        value.add("ColorPrimaryDark");
-        value.add("PrimaryLight");
-        value.add("ColorAccent");
-
-        ArrayList<String> data=new ArrayList<>();
-        data.add("#3F51B5");
-        data.add("#3F51B5");
-        data.add("#C5CAE9");
-        data.add("#03A9F4");
+        ArrayList<String> value=new ArrayList<>();          ArrayList<String> data=new ArrayList<>();
+        value.add("ColorPrimary");                          data.add("#009688");
+        value.add("ColorPrimaryDark");                      data.add("#00796B");
+        value.add("PrimaryLight");                          data.add("#B2DFDB");
+        value.add("ColorAccent");                           data.add("#00BCD4");
+        value.add("secondary_text");                        data.add("#727272");
+        value.add("icons");                                 data.add("#FFFFFF");
+        value.add("divider");                               data.add("#B6B6B6");
+        value.add("primary_text");                          data.add("#212121");
 
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -45,7 +43,7 @@ public class colorsGeneration {
             Element element = document.createElement("resources");//root element
             document.appendChild(element);
 
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < value.size(); i++) {
                 Element childElement = document.createElement(elements);
                 childElement.setAttribute(name, value.get(i));
                 childElement.appendChild(document.createTextNode(data.get(i)));
@@ -55,7 +53,7 @@ public class colorsGeneration {
             Transformer transformer = transFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             document.setXmlStandalone(true);
 
             Result output = new StreamResult(new File(dir+"colors.xml"));

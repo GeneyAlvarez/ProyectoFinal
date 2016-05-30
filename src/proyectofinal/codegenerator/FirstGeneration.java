@@ -33,6 +33,7 @@ public class FirstGeneration extends AnAction {
     Document ManifestLocation;
     String ManifestDirection;
 
+    ArrayList<String> classes=new ArrayList<>();
     ArrayList<ClassData> Class_Information=new ArrayList<>();
 
     @Override
@@ -72,8 +73,8 @@ public class FirstGeneration extends AnAction {
             }
             colorsGeneration.Start(DirRes+"values\\",project);
             stylesGeneration.Start(DirRes+"values\\",project);
-            Subroutines.PopUp(DirRes+"menu\\",project);
-            mainGeneration.Start(DirRes+"layout\\",DirSrc,project,Package,MainLocation,Package);
+            mainGeneration.Start(DirRes+"layout\\",DirSrc,project,Package,MainLocation,classes);
+            mainGeneration.AddActivityToManifest(ManifestDirection,"formlist");
             auxclassGeneration.start(DirSrc,project,Package,null);
             t=false;
             project2.getBaseDir().refresh(false,true);
@@ -86,7 +87,6 @@ public class FirstGeneration extends AnAction {
 
         frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 
-        //alertLabel.setForeground(Color.RED);
         Font newLabelFont=new Font(alertLabel.getFont().getName(),Font.ITALIC,alertLabel.getFont().getSize());
         alertLabel.setFont(newLabelFont);
 
@@ -128,6 +128,7 @@ public class FirstGeneration extends AnAction {
                                                 }
                                             }
                                             if(!sw){
+                                                classes.add(test[1]);
                                                 Attributes(project,text,DirSrc,DirRes,Package);
                                                 project.getBaseDir().refresh(false,true);
                                             }else{
@@ -151,6 +152,7 @@ public class FirstGeneration extends AnAction {
                                                 }
                                             }
                                             if(!sw2){
+                                                classes.add(test[2]);
                                                 Attributes(project,text,DirSrc,DirRes,Package);
                                                 project.getBaseDir().refresh(false,true);
                                             }else{
@@ -251,6 +253,12 @@ public class FirstGeneration extends AnAction {
                                                 System.out.println(Forms);
                                             }
                                             auxclassGeneration.start(DirSrc,project,Package,Subroutines.FormGeneration(Forms));
+                                            for(int i=0;i<classes.size();i++){
+                                                if(classes.get(i).equals(classname)){
+                                                    classes.remove(i);
+                                                }
+                                            }
+                                            mainGeneration.Start(DirRes+"layout\\",DirSrc,project,Package,MainLocation,classes);
                                             //delete activites
 
                                             mainGeneration.RemoveActivityFromManifest(ManifestDirection,test[1]);
@@ -345,7 +353,7 @@ public class FirstGeneration extends AnAction {
                                     Classes.add(Command.Create(commando,attrib,pathclass,pathxml,pack));
                                     ActivityGeneration.start(project,commando,attrib,pathclass,pathxml,pack,ManifestDirection);
                                     Class_Information.add(new ClassData(commando,attrib));
-
+                                    mainGeneration.Start(DirRes+"layout\\",DirSrc,project,Package,MainLocation,classes);
                                     frame2.dispose();
                                 }else{
                                     if(Subroutines.isAtribute(test[0])){
