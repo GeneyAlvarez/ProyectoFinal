@@ -168,6 +168,7 @@ public class mainGeneration {
         FAB_name.add("android:layout_alignParentBottom");               FAB_atrib.add("true");
         FAB_name.add("android:layout_alignRight");                      FAB_atrib.add("@+id/recycle");
         FAB_name.add("android:layout_alignEnd");                        FAB_atrib.add("@+id/recycle");
+        FAB_name.add("android:src");                                    FAB_atrib.add("@drawable/ic_add");
 
 
         try {
@@ -247,6 +248,7 @@ public class mainGeneration {
         ImgName.add("android:layout_alignParentTop");ImgValue.add("true");
         ImgName.add("android:layout_marginRight");ImgValue.add("10dp");
         ImgName.add("android:scaleType");ImgValue.add("centerCrop");
+        ImgName.add("android:background");ImgValue.add("@drawable/placeholder");
 
         //-----------------
         ArrayList<String> TextName=new ArrayList<>();
@@ -579,16 +581,14 @@ public class mainGeneration {
 
         ArrayList<String> FAB=new ArrayList<>();
         FAB.add("\tpublic void FAB_Click(View v){");
-        FAB.add("\t\tswitch (classname) {");
         for(int i=0;i<clases.size();i++){
-            FAB.add("\t\t\tcase \""+clases.get(i)+"\":");
+            FAB.add("\t\tif(classname.equals(\""+clases.get(i)+"\")) {");
             FAB.add("\t\t\t\t"+clases.get(i)+" info"+i+" = new "+clases.get(i)+"();");
-            FAB.add("\t\t\t\tRow row"+i+" new Row(info"+i+".getFirst(), info"+i+".getSecond(), info"+i+".getThird(), info"+i+".getIcon();");
+            FAB.add("\t\t\t\tRow row"+i+" = new Row(info"+i+".getFirst(), info"+i+".getSecond(), info"+i+".getThird(), info"+i+".getIcon());");
             FAB.add("\t\t\t\tData dat"+i+" = new Data(info"+i+", row"+i+");");
-            FAB.add("\t\t\t\tDe.Arraytest.add(dat"+i+")");
-            FAB.add("\t\t\t\tbreak;");
+            FAB.add("\t\t\t\tDe.Arraytest.add(dat"+i+");");
+            FAB.add("\t\t}");
         }
-        FAB.add("\t\t}");
         FAB.add("\t\tviewAdapter.notifyDataSetChanged();");
         FAB.add("\t}");
 
@@ -742,7 +742,7 @@ public class mainGeneration {
         return document;
     }
 
-    public static void AddActivityToManifest(String path,String activity_name){
+    public static void AddActivityToManifest(String path,String activity_name) {
         File f=new File(path+"\\AndroidManifest.xml");
 
         Document document = null;
@@ -767,7 +767,24 @@ public class mainGeneration {
             Element activity_added=document.createElement("activity");
             activity_added.setAttribute("android:name","."+activity_name);
             activity_added.setAttribute("android:label",""+activity_name);
-            man.appendChild(activity_added);
+
+            BufferedReader br = new BufferedReader(new FileReader(f));
+            boolean contains=false;
+            try {
+                String line = br.readLine();
+                while (line != null) {
+                    if(line.contains("<activity android:label=\"formlist\" android:name=\".formlist\"/>")){
+                        contains=true;
+                    }
+                    line = br.readLine();
+                }
+            } finally {
+                br.close();
+            }
+
+            if(!contains){
+                man.appendChild(activity_added);
+            }
 
             Result output = new StreamResult(new File(path+"\\AndroidManifest.xml"));
             Source input = new DOMSource(document);

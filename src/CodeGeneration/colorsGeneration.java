@@ -23,7 +23,7 @@ public class colorsGeneration {
         final ErrorHandler errorHandler = new ErrorHandler();
 
         String elements="color";
-        String name="\nname";
+        String name="name";
 
         ArrayList<String> value=new ArrayList<>();          ArrayList<String> data=new ArrayList<>();
         value.add("ColorPrimary");                          data.add("#009688");

@@ -153,6 +153,12 @@ public class ActivityGeneration {
         fab_name.add("android:clickable");                                     fab_atrib.add("true");
         fab_name.add("app:elevation");                                         fab_atrib.add("6dp");
         fab_name.add("app:rippleColor");                                       fab_atrib.add("@android:color/white");
+        if(Type.equals("view")){
+            fab_name.add("android:src");                                fab_atrib.add("@drawable/ic_create");
+        }else{
+            fab_name.add("android:src");                                fab_atrib.add("@drawable/ic_backspace");
+        }
+
 
         //---------------SAVE ALL-------------------------
         ArrayList<String> save_name=new ArrayList<>();
@@ -260,11 +266,17 @@ public class ActivityGeneration {
                                 case "view":
                                     VALUE= document.createElement("ImageView");
                                     VALUE.setAttribute("android:scaleType","centerCrop");
+                                    VALUE.setAttribute("android:layout_centerHorizontal","true");
+                                    VALUE.setAttribute("android:layout_width","200dp");
+                                    VALUE.setAttribute("android:layout_height","200dp");
                                     break;
                                 case "edition":
                                     VALUE= document.createElement("ImageButton");
                                     VALUE.setAttribute("android:onClick","onClick");
                                     VALUE.setAttribute("android:scaleType","centerCrop");
+                                    VALUE.setAttribute("android:layout_centerHorizontal","true");
+                                    VALUE.setAttribute("android:layout_width","200dp");
+                                    VALUE.setAttribute("android:layout_height","200dp");
                                     break;
                             }
                         }else{
