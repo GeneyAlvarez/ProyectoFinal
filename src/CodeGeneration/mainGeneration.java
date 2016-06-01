@@ -219,8 +219,6 @@ public class mainGeneration {
         rootname.add("android:layout_width");               rootattrib.add("match_parent");
         rootname.add("android:orientation");                rootattrib.add("vertical");
         rootname.add("xmlns:card_view");                    rootattrib.add("http://schemas.android.com/apk/res-auto");
-        rootname.add("android:padding");                    rootattrib.add("8dp");
-
 
         ArrayList<String> cardname=new ArrayList<>();       ArrayList<String> cardattrib=new ArrayList<>();
         cardname.add("android:id");                         cardattrib.add("@+id/cv");
@@ -237,6 +235,7 @@ public class mainGeneration {
         layoutname.add("android:focusableInTouchMode");        layoutattrib.add("false");
         layoutname.add("android:layout_height");               layoutattrib.add("wrap_content");
         layoutname.add("android:layout_width");                layoutattrib.add("match_parent");
+        layoutname.add("android:padding");                     layoutattrib.add("4dp");
 
 
         //Contenido del cardview-------------
@@ -590,6 +589,22 @@ public class mainGeneration {
             FAB.add("\t\t}");
         }
         FAB.add("\t\tviewAdapter.notifyDataSetChanged();");
+        FAB.add("");
+        FAB.add("\t\tint position=De.Arraytest.size()-1;");
+        FAB.add("\t\tData dat = De.Arraytest.get(position);");
+        FAB.add("\t\tObject inf = dat.getOb();");
+        FAB.add("\t\tString class_object = \"\" + inf.getClass();");
+        FAB.add("\t\tint piv = class_object.split(\"\\\\.\").length;");
+        FAB.add("\t\tclass_object = class_object.split(\"\\\\.\")[piv - 1];");
+        FAB.add("\t\tIntent i;");
+        FAB.add("\t\tString c_name = \"myapplicationtest.app.\" + class_object + \"_edition\";");
+        FAB.add("\t\tClass<?> c = null;");
+        FAB.add("\t\ttry {c = Class.forName(c_name);");
+        FAB.add("\t\t} catch (ClassNotFoundException e) {e.printStackTrace();}");
+        FAB.add("\t\ti = new Intent(context, c);");
+        FAB.add("\t\tsavePreferences(\"INDEX\", position);");
+        FAB.add("\t\tstartActivity(i);");
+        FAB.add("");
         FAB.add("\t}");
 
 //------------

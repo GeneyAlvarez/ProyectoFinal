@@ -111,6 +111,9 @@ public class ActivityGeneration {
         ArrayList<String> Collapse_img_name=new ArrayList<>();
         ArrayList<String> Collapse_img_atrib=new ArrayList<>();
         Collapse_img_name.add("android:id");                           Collapse_img_atrib.add("@+id/header");
+        if(Type.equals("edition")){
+            Collapse_img_name.add("android:onClick");                      Collapse_img_atrib.add("onClick2");
+        }
         Collapse_img_name.add("android:layout_width");                 Collapse_img_atrib.add("match_parent");
         Collapse_img_name.add("android:layout_height");                Collapse_img_atrib.add("250sp");
         Collapse_img_name.add("android:fitsSystemWindows");            Collapse_img_atrib.add("true");
@@ -159,21 +162,6 @@ public class ActivityGeneration {
             fab_name.add("android:src");                                fab_atrib.add("@drawable/ic_backspace");
         }
 
-
-        //---------------SAVE ALL-------------------------
-        ArrayList<String> save_name=new ArrayList<>();
-        ArrayList<String> save_atrib=new ArrayList<>();
-        save_name.add("android:layout_width");                                    save_atrib.add("wrap_content");
-        save_name.add("android:layout_height");                                   save_atrib.add("wrap_content");
-        save_name.add("android:id");                                              save_atrib.add("@+id/saveAll");
-        save_name.add("android:text");                                            save_atrib.add("Guardar todo");
-        save_name.add("android:onClick");                                         save_atrib.add("SAVEALL");
-        save_name.add("android:fontFamily");                                      save_atrib.add("sans-serif-condensed");
-        save_name.add("android:textSize");                                        save_atrib.add("25sp");
-        save_name.add("android:layout_centerHorizontal");                         save_atrib.add("true");
-        save_name.add("android:layout_marginTop");                                save_atrib.add("30sp");
-        //android:layout_below="@+id/imagen"
-
         //-----------Text Components--------------
         ArrayList<String> text_field_name=new ArrayList<>();                    ArrayList<String> text_field_atrib=new ArrayList<>();
         text_field_name.add("android:layout_width");                            text_field_atrib.add("match_parent");
@@ -183,8 +171,6 @@ public class ActivityGeneration {
         text_field_name.add("android:paddingRight");                            text_field_atrib.add("10sp");
         text_field_name.add("android:fontFamily");                              text_field_atrib.add("sans-serif-condensed");
         text_field_name.add("android:textColor");                               text_field_atrib.add("#000000");
-        text_field_name.add("android:textSize");                                text_field_atrib.add("30sp");
-        text_field_name.add("android:textStyle");                               text_field_atrib.add("bold");
         //----------------------------------------
 
         try {
@@ -210,7 +196,12 @@ public class ActivityGeneration {
             }
             Appbar.appendChild(Collapse);
 
-            Element Collapse_img = document.createElement("ImageView");
+            Element Collapse_img;
+            if(Type.equals("edition")){
+                Collapse_img = document.createElement("ImageButton");
+            }else{
+                Collapse_img = document.createElement("ImageView");
+            }
             for(int i=0;i<Collapse_img_name.size();i++){
                 Collapse_img.setAttribute(Collapse_img_name.get(i), Collapse_img_atrib.get(i));
             }
@@ -257,6 +248,8 @@ public class ActivityGeneration {
 
                         Element ATTRIBUTE= document.createElement("TextView");
                         ATTRIBUTE.setAttribute("android:text",attr_name);
+                        ATTRIBUTE.setAttribute("android:textStyle","bold");
+                        ATTRIBUTE.setAttribute("android:textSize","20sp");
                         for(int j=0;j<text_field_name.size();j++){
                             ATTRIBUTE.setAttribute(text_field_name.get(j),text_field_atrib.get(j));
                         }
@@ -280,14 +273,13 @@ public class ActivityGeneration {
                                     break;
                             }
                         }else{
+                            ATTRIBUTE.setAttribute("android:textSize","18sp");
                             switch(Type){//android:inputType
                                 case "view":
                                     VALUE= document.createElement("TextView");
-                                    VALUE.setAttribute("android:gravity","center");
                                     break;
                                 case "edition":
                                     VALUE= document.createElement("EditText");
-                                    VALUE.setAttribute("android:gravity","center");
                                     if(attr_type.equals("string")){
                                         VALUE.setAttribute("android:inputType","text");
                                     }else{
@@ -320,14 +312,6 @@ public class ActivityGeneration {
 
                     }
 
-            if(Type.equals("edition")) {
-                Element boton = document.createElement("Button");
-                boton.setAttribute("android:layout_below", "@+id/value" + (tam - 1));
-                for (int j = 0; j < save_name.size(); j++) {
-                    boton.setAttribute(save_name.get(j), save_atrib.get(j));
-                }
-                Layout.appendChild(boton);
-            }
             //----------------------------------------------------------------
 
             TransformerFactory transFactory = TransformerFactory.newInstance();
@@ -350,6 +334,9 @@ public class ActivityGeneration {
 
     public static void ActivityClass2(Project project, ArrayList<String> attrib,String path,String Type,String Name,String Pack){
         String classname=Name+"_"+Type;
+
+        boolean FIRST_IMAGE=true;
+        boolean FIRST_IMAGE2=true;
 
         String pack="package "+Pack+";";
 
@@ -473,9 +460,19 @@ public class ActivityGeneration {
             switch(Type){
                 case "view":
                     if(type.equals("file")){
-                        oncreate.add("\t\timgv"+i+"=(ImageView) findViewById(R.id.value"+i+");");
-                        oncreate.add("\t\tval_"+name+" = obj.get"+nameMayus+"();");
-                        oncreate.add("\t\timgv"+i+".setImageURI(Uri.parse(val_"+name+"));");
+                        if(FIRST_IMAGE){
+                            oncreate.add("\t\tTextView test=(TextView)findViewById(R.id.text"+i+");");
+                            oncreate.add("\t\timgv"+i+"=(ImageView) findViewById(R.id.value"+i+");");
+                            oncreate.add("\t\tval_"+name+" = obj.get"+nameMayus+"();");
+                            oncreate.add("\t\timgv"+i+".setImageURI(Uri.parse(val_"+name+"));");
+                            oncreate.add("\t\ttest.setVisibility(View.GONE);");
+                            oncreate.add("\t\timgv"+i+".setVisibility(View.GONE);");
+                            FIRST_IMAGE=false;
+                        }else{
+                            oncreate.add("\t\timgv"+i+"=(ImageView) findViewById(R.id.value"+i+");");
+                            oncreate.add("\t\tval_"+name+" = obj.get"+nameMayus+"();");
+                            oncreate.add("\t\timgv"+i+".setImageURI(Uri.parse(val_"+name+"));");
+                        }
                     }else{
                         oncreate.add("\t\ttv"+i+"=(TextView) findViewById(R.id.value"+i+");");
                         oncreate.add("\t\tval_"+name+" = \"\"+obj.get"+nameMayus+"();");
@@ -484,9 +481,19 @@ public class ActivityGeneration {
                     break;
                 case "edition":
                     if(type.equals("file")){
-                        oncreate.add("\t\timgv"+i+"=(ImageButton) findViewById(R.id.value"+i+");");
-                        oncreate.add("\t\tval_"+name+" = obj.get"+nameMayus+"();");
-                        oncreate.add("\t\timgv"+i+".setImageURI(Uri.parse(val_"+name+"));");
+                        if(FIRST_IMAGE){
+                            oncreate.add("\t\tTextView test=(TextView)findViewById(R.id.text"+i+");");
+                            oncreate.add("\t\timgv"+i+"=(ImageButton) findViewById(R.id.value"+i+");");
+                            oncreate.add("\t\tval_"+name+" = obj.get"+nameMayus+"();");
+                            oncreate.add("\t\timgv"+i+".setImageURI(Uri.parse(val_"+name+"));");
+                            oncreate.add("\t\ttest.setVisibility(View.GONE);");
+                            oncreate.add("\t\timgv"+i+".setVisibility(View.GONE);");
+                            FIRST_IMAGE=false;
+                        }else{
+                            oncreate.add("\t\timgv"+i+"=(ImageButton) findViewById(R.id.value"+i+");");
+                            oncreate.add("\t\tval_"+name+" = obj.get"+nameMayus+"();");
+                            oncreate.add("\t\timgv"+i+".setImageURI(Uri.parse(val_"+name+"));");
+                        }
                     }else{
                         oncreate.add("\t\ttv"+i+"=(EditText) findViewById(R.id.value"+i+");");
                         oncreate.add("\t\tval_"+name+" = \"\"+obj.get"+nameMayus+"();");
@@ -544,6 +551,37 @@ public class ActivityGeneration {
                 fab.add("\t\tstartActivity(i);");
                 break;
             case "edition":
+                for(int i=0; i<attrib.size();i++){
+                    String type = attrib.get(i).split("\\.")[1];
+                    String name = attrib.get(i).split("\\.")[0];
+                    String nameMayus=name.substring(0,1).toUpperCase()+name.substring(1);
+
+                    switch (type){
+                        case "string":
+                            fab.add("\t\tobj.set"+nameMayus+"(tv"+i+".getText().toString());");
+                            break;
+                        case "file":
+                            if(FIRST_IMAGE2){
+                                fab.add("\t\tif(header.getDrawable()!=null){");
+                                fab.add("\t\t\tobj.set"+nameMayus+"((getImageUri(this,((BitmapDrawable) header.getDrawable()).getBitmap())).toString());");
+                                fab.add("\t\t}");
+                                FIRST_IMAGE2=false;
+                            }else{
+                                fab.add("\t\tif(img"+i+".getDrawable()!=null){");
+                                fab.add("\t\t\tobj.set"+nameMayus+"((getImageUri(this,((BitmapDrawable) img"+i+".getDrawable()).getBitmap())).toString());");
+                                fab.add("\t\t}");
+                            }
+
+                            break;
+                        case "int":
+                            fab.add("\t\tobj.set"+nameMayus+"(Integer.parseInt(tv"+i+".getText().toString()));");
+                            break;
+                    }
+                }
+                fab.add("\t\tDe.Arraytest.get(index).setOb(obj);");
+                fab.add("\t\tDe.Arraytest.get(index).setRow(new Row(obj.getFirst(),obj.getSecond(),obj.getThird(),obj.getIcon()));");
+
+
                 fab.add("\t\tthis.finish();");
                 break;
         }
@@ -573,6 +611,10 @@ public class ActivityGeneration {
 
         ArrayList<String> onclicks = new ArrayList<>();
         if(Type.equals("edition")){
+            onclicks.add("\tpublic void onClick2(View v){");
+            onclicks.add("\t\tactual_id=R.id.header;");
+            onclicks.add("\t\timagenEdit(header);}");
+            onclicks.add("");
             onclicks.add("\tpublic void onClick(View v){");
             onclicks.add("\t\tswitch(v.getId()){");
             for(int i=0;i<attrib.size();i++) {
@@ -653,34 +695,6 @@ public class ActivityGeneration {
         activityResult.add("\t\t}");
         activityResult.add("\t}");
 
-
-        ArrayList<String> SAVE = new ArrayList<>();
-        if(Type.equals("edition")){
-            SAVE.add("\tpublic void SAVEALL(View v){");
-            for(int i=0; i<attrib.size();i++){
-                String type = attrib.get(i).split("\\.")[1];
-                String name = attrib.get(i).split("\\.")[0];
-                String nameMayus=name.substring(0,1).toUpperCase()+name.substring(1);
-
-                switch (type){
-                    case "string":
-                        SAVE.add("\t\tobj.set"+nameMayus+"(tv"+i+".getText().toString());");
-                        break;
-                    case "file":
-                        SAVE.add("\t\tif(imgv"+i+".getDrawable()!=null){");
-                        SAVE.add("\t\t\tobj.set"+nameMayus+"((getImageUri(this,((BitmapDrawable) imgv"+i+".getDrawable()).getBitmap())).toString());");
-                        SAVE.add("\t\t}");
-                        break;
-                    case "int":
-                        SAVE.add("\t\tobj.set"+nameMayus+"(Integer.parseInt(tv"+i+".getText().toString()));");
-                        break;
-                }
-            }
-            SAVE.add("\t\tDe.Arraytest.get(index).setOb(obj);");
-            SAVE.add("\t\tDe.Arraytest.get(index).setRow(new Row(obj.getFirst(),obj.getSecond(),obj.getThird(),obj.getIcon()));");
-            SAVE.add("\t}");
-        }
-
         ArrayList<String> Shared=new ArrayList<>();
         Shared.add("\tprivate int loadSavedPreferences() {");
         Shared.add("\t\tSharedPreferences sharedPreferences = getSharedPreferences(\"MisPreferencias\", Context.MODE_PRIVATE);");
@@ -728,10 +742,6 @@ public class ActivityGeneration {
         }
         output.add("");
         if(Type.equals("edition")){
-            for(String st : SAVE){
-                output.add(st);
-            }
-            output.add("");
             for(String st : uri){
                 output.add(st);
             }
