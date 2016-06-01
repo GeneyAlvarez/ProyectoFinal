@@ -164,8 +164,6 @@ public class ActivityGeneration {
 
         //-----------Text Components--------------
         ArrayList<String> text_field_name=new ArrayList<>();                    ArrayList<String> text_field_atrib=new ArrayList<>();
-        text_field_name.add("android:layout_width");                            text_field_atrib.add("match_parent");
-        text_field_name.add("android:layout_height");                           text_field_atrib.add("wrap_content");
         text_field_name.add("android:layout_marginTop");                        text_field_atrib.add("20sp");
         text_field_name.add("android:paddingLeft");                             text_field_atrib.add("10sp");
         text_field_name.add("android:paddingRight");                            text_field_atrib.add("10sp");
@@ -250,6 +248,8 @@ public class ActivityGeneration {
                         ATTRIBUTE.setAttribute("android:text",attr_name);
                         ATTRIBUTE.setAttribute("android:textStyle","bold");
                         ATTRIBUTE.setAttribute("android:textSize","20sp");
+                        ATTRIBUTE.setAttribute("android:layout_width","match_parent");
+                        ATTRIBUTE.setAttribute("android:layout_height","wrap_content");
                         for(int j=0;j<text_field_name.size();j++){
                             ATTRIBUTE.setAttribute(text_field_name.get(j),text_field_atrib.get(j));
                         }
@@ -384,6 +384,7 @@ public class ActivityGeneration {
                 imports.add("import android.view.MenuItem;");
                 imports.add("import android.view.View;");
                 imports.add("import android.widget.EditText;");
+                imports.add("import android.widget.TextView;");
                 imports.add("import android.widget.ImageView;");
                 imports.add("import android.widget.Toast;");
                 imports.add("import java.io.ByteArrayOutputStream;");
@@ -567,8 +568,8 @@ public class ActivityGeneration {
                                 fab.add("\t\t}");
                                 FIRST_IMAGE2=false;
                             }else{
-                                fab.add("\t\tif(img"+i+".getDrawable()!=null){");
-                                fab.add("\t\t\tobj.set"+nameMayus+"((getImageUri(this,((BitmapDrawable) img"+i+".getDrawable()).getBitmap())).toString());");
+                                fab.add("\t\tif(imgv"+i+".getDrawable()!=null){");
+                                fab.add("\t\t\tobj.set"+nameMayus+"((getImageUri(this,((BitmapDrawable) imgv"+i+".getDrawable()).getBitmap())).toString());");
                                 fab.add("\t\t}");
                             }
 

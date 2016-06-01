@@ -783,23 +783,28 @@ public class mainGeneration {
             activity_added.setAttribute("android:name","."+activity_name);
             activity_added.setAttribute("android:label",""+activity_name);
 
-            BufferedReader br = new BufferedReader(new FileReader(f));
-            boolean contains=false;
-            try {
-                String line = br.readLine();
-                while (line != null) {
-                    if(line.contains("<activity android:label=\"formlist\" android:name=\".formlist\"/>")){
-                        contains=true;
+            if(activity_name.equals("formlist")){
+                BufferedReader br = new BufferedReader(new FileReader(f));
+                boolean contains=false;
+                try {
+                    String line = br.readLine();
+                    while (line != null) {
+                        if(line.contains("<activity android:label=\"formlist\" android:name=\".formlist\"/>")){
+                            contains=true;
+                        }
+                        line = br.readLine();
                     }
-                    line = br.readLine();
+                } finally {
+                    br.close();
                 }
-            } finally {
-                br.close();
-            }
 
-            if(!contains){
+                if(!contains){
+                    man.appendChild(activity_added);
+                }
+            }else{
                 man.appendChild(activity_added);
             }
+
 
             Result output = new StreamResult(new File(path+"\\AndroidManifest.xml"));
             Source input = new DOMSource(document);
